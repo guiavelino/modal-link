@@ -8,6 +8,12 @@ import { IconButton } from '@mui/material';
 
 import styles from './styles.module.scss';
 import SelectComponent from '@/components/Select';
+import Input from '@/components/Input';
+import MultipleSelectChip from '@/components/SelectChip';
+import MultilineTextFields from '@/components/TextArea';
+import Radio from '@/components/Radio'
+import PhotoContainer from '@/components/PhotoContainer';
+import frontCaminhao from '../../../public/frente-caminhao.jpg'
 
 const FirstStep = () => {
     const optionsFactory = (id: number, description: string) => ({ id, description });
@@ -28,10 +34,31 @@ const FirstStep = () => {
                 placeholder='Veículo'
                 optionsProps={optionsVehicleProps} 
             />
+
+            <Input
+                type='text'
+                placeholder='Localização'
+                name='location'
+            />
             
-            <SelectComponent 
-                placeholder='Problemas'
-                optionsProps={optionsProblemsProps} 
+            <MultipleSelectChip
+                placeholder='Problema(s)'
+                options={['Falta de combustível', 'Pneu furado']}
+            />
+
+            <MultilineTextFields/>
+
+            <Radio/>
+
+            <MultipleSelectChip
+                placeholder='Tipo de carga'
+                options={['Carga frágil', 'Carga perecível']}
+            />
+
+            <Input
+                type='number'
+                placeholder='Peso estimado da carga em kg'
+                name='load'
             />
         </div>
     );
@@ -41,7 +68,10 @@ const SecondStep = () => {
 
     return (
         <div className={styles.secondStep}>
-           SecondStep 
+           <PhotoContainer
+            title='Posicione a parte frontal do veículo'
+            exampleImage={frontCaminhao}
+           />
         </div>
     );
 }
@@ -50,8 +80,29 @@ const ThirdStep = () => {
 
     return (
         <div className={styles.thirdStep}>
-           ThirdStep 
+           <PhotoContainer
+            title='Posicione a lateral esquerda do veículo'
+            exampleImage={frontCaminhao}
+           />
         </div>
+    );
+}
+
+const FourthStep = () => {
+    return (
+        <PhotoContainer
+            title='Posicione a lateral direita do veículo'
+            exampleImage={frontCaminhao}
+           />
+    );
+}
+
+const FifthStep = () => {
+    return (
+        <PhotoContainer
+            title='Posicione a parte traseira do veículo'
+            exampleImage={frontCaminhao}
+           />
     );
 }
 
@@ -125,19 +176,8 @@ export default function RequestModal() {
             {activeStep === 0 && <FirstStep />}
             {activeStep === 1 && <SecondStep />}
             {activeStep === 2 && <ThirdStep />}
-            
-            {activeStep === 3 && (
-                <h1>teste</h1>
-            )}
-        
-            {activeStep === 4 && (
-                <h1>teste</h1>
-            )}
-            
-            {activeStep === 5 && (
-                <h1>teste</h1>
-            )}
-        
+            {activeStep === 3 && <FourthStep />}
+            {activeStep === 4 && <FifthStep />}
         </section>
         
         <Button onClick={handleNext} variant="contained" className={styles.nextButton}>
