@@ -1,17 +1,23 @@
 import Image, { StaticImageData } from "next/image";
+import { Camera } from "react-camera-pro";
 import Alert from "@mui/material/Alert";
 import { BiSolidCamera } from "react-icons/bi";
 
-import { title } from "process";
+import { useCarPhotos } from "@/hooks/useCarPhotos";
 
 import styles from "./styles.module.scss";
+import { useRef } from "react";
 
 type PhotoContainerProps = {
   title: string;
   exampleImage: StaticImageData;
+  setPhoto: (photo: string) => void;
+  photo: string;
 };
 
 export default function PhotoContainer({ title, exampleImage }: PhotoContainerProps) {
+  const camera = useRef(null);
+
   return (
     <main className={styles.photoContainer}>
       <div className={styles.photoCard}>
@@ -24,7 +30,7 @@ export default function PhotoContainer({ title, exampleImage }: PhotoContainerPr
         </div>
       </div>
 
-      <Alert className={styles.alertContainer} variant="outlined" severity="info" style={{ color: "#03a9f4" }}>
+      <Alert className={styles.alertContainer} variant="outlined" severity="info">
         Fica a dica: tente fazer a foto na horizontal.
       </Alert>
 
