@@ -1,11 +1,8 @@
 .requestModal {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   padding: 32px 12px;
-  justify-content: space-evenly;
-  max-width: 390px;
-  margin-inline: auto;
 
   .header {
     display: flex;
@@ -23,10 +20,14 @@
     margin: 36px 0;
   }
 
+  .content {
+    min-height: calc(100vh - 264px);
+  }
+
   .nextButton {
     min-width: 100%;
     height: 40px;
-    margin-top: 36px;
+    margin-top: 32px;
     background-color: #00a1fc;
     color: #fff;
   }
