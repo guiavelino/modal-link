@@ -6,21 +6,23 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  relationMode      = "prisma"
 }
 
 model UserType {
-  id        String   @id @default(uuid()) @db.Uuid
+  id        Int      @id @default(autoincrement())
   name      String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @default(now())
   user      User[]
 }
 
 model User {
-  id         String    @id @default(uuid()) @db.Uuid
-  userTypeId String    @db.Uuid
+  id         Int       @id @default(autoincrement())
+  userTypeId Int
   name       String
   lastName   String
   fullName   String
@@ -28,80 +30,88 @@ model User {
   password   String
   cpf        String    @unique
   createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  updatedAt  DateTime  @updatedAt @default(now())
   userType   UserType  @relation(fields: [userTypeId], references: [id])
   vehicle    Vehicle[]
+
+  @@index([userTypeId])
 }
 
 model ModalCateogry {
-  id        String   @id @default(uuid()) @db.Uuid
+  id        Int      @id @default(autoincrement())
   name      String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @default(now())
   modal     Modal[]
 }
 
 model Modal {
-  id              String        @id @default(uuid()) @db.Uuid
-  modalCategoryId String        @db.Uuid
+  id              Int           @id @default(autoincrement())
+  modalCategoryId Int
   transitBoard    String
   createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  updatedAt       DateTime      @updatedAt @default(now())
   modalCategory   ModalCateogry @relation(fields: [modalCategoryId], references: [id])
   order           Order[]
+
+  @@index([modalCategoryId])
 }
 
 model Vehicle {
-  id           String   @id @default(uuid()) @db.Uuid
-  userId       String   @db.Uuid
+  id           Int      @id @default(autoincrement())
+  userId       Int
   transitBoard String
   height       Float
   width        Float
   weight       Float
   isAxle       Boolean
   createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  updatedAt    DateTime @updatedAt @default(now())
   user         User     @relation(fields: [userId], references: [id])
   order        Order[]
+
+  @@index([userId])
 }
 
 model OrderStatus {
-  id        String   @id @default(uuid()) @db.Uuid
+  id        Int      @id @default(autoincrement())
   name      String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @default(now())
   order     Order[]
 }
 
 model Problem {
-  id        String   @id @default(uuid()) @db.Uuid
+  id        Int      @id @default(autoincrement())
   name      String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @default(now())
   order     Order[]
 }
 
 model TypeLoad {
-  id        String   @id @default(uuid()) @db.Uuid
+  id        Int      @id @default(autoincrement())
   name      String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @default(now())
   order     Order[]
 }
 
 model Order {
-  id                 String      @id @default(uuid()) @db.Uuid
-  modalId            String      @db.Uuid
-  vehicleId          String      @db.Uuid
-  orderStatusId      String      @db.Uuid
+  id                 Int         @id @default(autoincrement())
+  modalId            Int
+  vehicleId          Int
+  orderStatusId      Int
   location           String
   problemDescription String?
   loadWeight         Float?
   createdAt          DateTime    @default(now())
-  updatedAt          DateTime    @updatedAt
+  updatedAt          DateTime    @updatedAt @default(now())
   modal              Modal       @relation(fields: [modalId], references: [id])
   vehicle            Vehicle     @relation(fields: [vehicleId], references: [id])
   orderStatus        OrderStatus @relation(fields: [orderStatusId], references: [id])
   problem            Problem[]
   typeLoad           TypeLoad[]
+
+  @@index([modalId, vehicleId, orderStatusId])
 }
