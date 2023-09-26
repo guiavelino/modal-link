@@ -13,7 +13,10 @@ import MultipleSelectChip from '@/components/SelectChip';
 import MultilineTextFields from '@/components/TextArea';
 import Radio from '@/components/Radio'
 import PhotoContainer from '@/components/PhotoContainer';
-import frontCaminhao from '../../../public/frente-caminhao.jpg'
+import frontTruck from '../../../public/front-truck.jpg'
+import leftTruck from '../../../public/left-truck.jpg'
+import rightTruck from '../../../public/right-truck.jpg'
+import backTruck from '../../../public/back-truck.jpg'
 
 const FirstStep = () => {
     const optionsFactory = (id: number, description: string) => ({ id, description });
@@ -70,7 +73,7 @@ const SecondStep = () => {
         <div className={styles.secondStep}>
            <PhotoContainer
             title='Posicione a parte frontal do veículo'
-            exampleImage={frontCaminhao}
+            exampleImage={frontTruck}
            />
         </div>
     );
@@ -82,7 +85,7 @@ const ThirdStep = () => {
         <div className={styles.thirdStep}>
            <PhotoContainer
             title='Posicione a lateral esquerda do veículo'
-            exampleImage={frontCaminhao}
+            exampleImage={leftTruck}
            />
         </div>
     );
@@ -90,19 +93,25 @@ const ThirdStep = () => {
 
 const FourthStep = () => {
     return (
-        <PhotoContainer
+        <div className={styles.thirdStep}>
+            <PhotoContainer
             title='Posicione a lateral direita do veículo'
-            exampleImage={frontCaminhao}
+            exampleImage={rightTruck}
            />
+        </div>
+        
     );
 }
 
 const FifthStep = () => {
     return (
-        <PhotoContainer
+        <div className={styles.thirdStep}>
+            <PhotoContainer
             title='Posicione a parte traseira do veículo'
-            exampleImage={frontCaminhao}
+            exampleImage={backTruck}
            />
+        </div>
+        
     );
 }
 

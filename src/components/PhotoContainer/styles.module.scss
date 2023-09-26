@@ -1,5 +1,16 @@
 .photoContainer {
     img {
-        margin: 12px;
+        margin: 12px 16px;
     }
+
+    h1 {
+        font-size: 16px;
+        margin: 12px 16px;
+    }
+}
+
+.alertContainer {
+    width: 332px;
+    margin: 8px 16px;
+    font-size: 12px;
 }
