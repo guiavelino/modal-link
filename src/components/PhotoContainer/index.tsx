@@ -15,15 +15,17 @@ type PhotoContainerProps = {
   photo: string;
 };
 
-export default function PhotoContainer({ title, exampleImage }: PhotoContainerProps) {
+export default function PhotoContainer({ title, exampleImage, photo, setPhoto }: PhotoContainerProps) {
   const camera = useRef(null);
 
   return (
     <main className={styles.photoContainer}>
       <div className={styles.photoCard}>
+        <Camera ref={camera} errorMessages={{}} />
         <h1>{title}</h1>
 
         <div className={styles.picture}>
+          {/* <button onClick={() => setPhoto(camera.current.takePhoto())}> */}
           <button>
             Tirar Foto <BiSolidCamera size={24} />
           </button>
