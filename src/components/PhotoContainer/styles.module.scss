@@ -1,16 +1,58 @@
 .photoContainer {
-    img {
-        margin: 12px 16px;
-    }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+  gap: 20px;
+  height: 100%;
+
+  .photoCard {
+    width: 100%;
+    gap: 20px;
 
     h1 {
-        font-size: 16px;
-        margin: 12px 16px;
+      font-size: 16px;
+      margin-bottom: 16px;
+      line-height: 1;
     }
+
+    .picture {
+      gap: 20px;
+
+      width: 100%;
+      height: 200px;
+
+      background-color: #d9d9d9;
+      border-radius: 4px;
+
+      button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 1.25rem;
+        gap: 8px;
+      }
+    }
+
+    img {
+      width: 100%;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+  }
 }
 
 .alertContainer {
-    width: 332px;
-    margin: 8px 16px;
-    font-size: 12px;
+  width: 100%;
+  align-items: center;
+  line-height: 1;
+  font-size: 0.75rem;
+  color: #4fc3f7;
+  border-color: #4fc3f7;
 }
