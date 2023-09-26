@@ -30,4 +30,10 @@
     background-color: #00a1fc;
     color: #fff;
   }
+
+  .firstStepFormulary {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
 }

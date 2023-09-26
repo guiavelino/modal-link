@@ -1,23 +1,30 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
+import * as React from "react";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
 
-export default function MultilineTextFields() {
+import styles from "./styles.module.scss";
+
+type TextAreaProps = {
+  placeholder?: string;
+};
+
+export default function TextArea({ placeholder }: TextAreaProps = { placeholder: "" }) {
   return (
     <Box
       component="form"
       sx={{
-        '& .MuiTextField-root': { width: '100%' },
+        "& .MuiTextField-root": { width: "100%" },
       }}
       noValidate
       autoComplete="off"
     >
-    <TextField
+      <TextField
+        className={styles.textArea}
         id="outlined-multiline-static"
-        placeholder='Descreva o problema do veículo...'
+        placeholder={placeholder}
         multiline
         rows={4}
-    />
+      />
     </Box>
   );
 }

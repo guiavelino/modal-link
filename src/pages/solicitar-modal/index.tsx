@@ -4,13 +4,15 @@ import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
 import Button from "@mui/material/Button";
 import { MdKeyboardArrowLeft } from "react-icons/md";
+import { PiMapPinFill } from "react-icons/pi";
+import { GiWeight } from "react-icons/gi";
 import { IconButton } from "@mui/material";
 
 import styles from "./styles.module.scss";
 import SelectComponent from "@/components/Select";
 import Input from "@/components/Input";
 import MultipleSelectChip from "@/components/SelectChip";
-import MultilineTextFields from "@/components/TextArea";
+import TextArea from "@/components/TextArea";
 import Radio from "@/components/Radio";
 import PhotoContainer from "@/components/PhotoContainer";
 import frontTruck from "../../../public/front-truck.jpg";
@@ -20,6 +22,9 @@ import backTruck from "../../../public/back-truck.jpg";
 import { useCarPhotos } from "@/hooks/useCarPhotos";
 
 const FirstStep = () => {
+  const [localization, setLocalization] = useState("");
+  const [weightInKg, setWeightInKg] = useState(0);
+
   const optionsFactory = (id: number, description: string) => ({ id, description });
 
   const optionsVehicleProps = [
@@ -33,20 +38,39 @@ const FirstStep = () => {
   const optionsProblemsProps = [optionsFactory(1, "Falta combustível"), optionsFactory(2, "Pneu furado")];
 
   return (
-    <div>
+    <div className={styles.firstStepFormulary}>
       <SelectComponent placeholder="Veículo" optionsProps={optionsVehicleProps} />
 
-      <Input type="text" placeholder="Localização" name="location" />
+      <Input
+        type="text"
+        placeholder="Localização"
+        name="location"
+        icon={<PiMapPinFill />}
+        onChange={(event) => {
+          const { value } = event.target;
+          setLocalization(value);
+        }}
+        value={localization}
+      />
 
       <MultipleSelectChip placeholder="Problema(s)" options={["Falta de combustível", "Pneu furado"]} />
 
-      <MultilineTextFields />
+      <TextArea placeholder="Descreva o problema do veículo..." />
 
       <Radio />
 
       <MultipleSelectChip placeholder="Tipo de carga" options={["Carga frágil", "Carga perecível"]} />
 
-      <Input type="number" placeholder="Peso estimado da carga em kg" name="load" />
+      <Input
+        onChange={(event) => {
+          const { value } = event.target;
+          setWeightInKg(Number(value));
+        }}
+        type="number"
+        placeholder="Peso estimado da carga em kg"
+        name="load"
+        icon={<GiWeight />}
+      />
     </div>
   );
 };

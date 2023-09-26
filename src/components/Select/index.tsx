@@ -1,18 +1,20 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import styles from './styles.module.scss';
+import styles from "./styles.module.scss";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 type OptionsProps = {
-    id: number;
-    description: string;
-}
+  id: number;
+  description: string;
+};
 
 type SelectComponentProps = {
-    placeholder: string;
-    optionsProps: OptionsProps[];
-}
+  placeholder: string;
+  optionsProps: OptionsProps[];
+  id?: string;
+};
 
-export default function SelectComponent({ placeholder, optionsProps }: SelectComponentProps) {
+export default function SelectComponent({ placeholder, optionsProps, id = "select" }: SelectComponentProps) {
   const [selected, setSeletected] = useState<number | null>(null);
 
   const handleChange = (event: any) => {
@@ -20,9 +22,20 @@ export default function SelectComponent({ placeholder, optionsProps }: SelectCom
   };
 
   return (
-    <select className={styles.selectContainer} onChange={handleChange}>
-        <option value="" disabled selected>{placeholder}</option>
-        {optionsProps.map(option => <option value={option.id}>{option.description}</option>)}
-    </select>
+    <FormControl>
+      <InputLabel id="select-label">{placeholder}</InputLabel>
+      <Select
+        labelId="select-label"
+        id={id}
+        value={selected}
+        label={placeholder}
+        onChange={handleChange}
+        className={styles.selectContainer}
+      >
+        {optionsProps.map((option) => (
+          <MenuItem value={option.id}>{option.description}</MenuItem>
+        ))}
+      </Select>
+    </FormControl>
   );
 }
