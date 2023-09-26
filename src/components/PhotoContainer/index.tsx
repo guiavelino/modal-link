@@ -20,8 +20,8 @@ export default function PhotoContainer({ title, exampleImage }: PhotoContainerPr
                 alt=''
                 objectFit='fill'
             />
-            <Alert variant="outlined" severity="info">
-                This is an info alert — check it out!
+            <Alert className={styles.alertContainer} variant="outlined" severity="info" style={{ color: '#03a9f4' }}>
+                Fica a dica: tente fazer a foto na horizontal.
             </Alert>
             <h1>Exemplo</h1>
             <Image
