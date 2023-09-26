@@ -1,0 +1,110 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 48px;
+    height: 72px;
+
+    h1 {
+        font-size: 1.5rem;
+    }
+}
+
+.stepper {
+    padding: 16px;
+}
+
+.map {
+    height: 400px;
+    width: 100%;
+}
+
+.modalInfoContainer {
+    bottom: 0;
+    height: 160px;
+    border-radius: 20px 20px 0px 0px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .driverContainer,
+    .statisticsInfo {
+        height: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    .driverContainer {
+        padding: 0 12px;
+        justify-content: space-between;
+        background-color: #ffffff;
+        border-radius: 20px 20px 0px 0px;
+
+        .driverInfo {
+            display: flex;
+            gap: 8px;
+            font-weight: bold;
+
+            & > div:nth-child(2) {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+
+                h3 {
+                    font-size: 1rem;
+                }
+
+                p {
+                    color: #868585;
+                    font-size: 1rem;
+                }
+            }
+        }
+        
+        .transitBoard {
+            border: 2px solid #000;
+            width: 100px;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+
+            & > div:nth-child(1) {
+                background-color: #08399C;
+                color: #fff;
+                height: 16px;
+                font-size: .75rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            } 
+            
+            & > div:nth-child(2) {
+                height: 20px;
+                font-size: 1rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            } 
+        }
+    }
+
+    .statisticsInfo {
+        background-color: #D9D9D9;
+
+        .distanceInfoContainer,
+        .timeInfoContainer {
+            text-align: center;
+            font-weight: bold;
+
+            h3 {
+                font-size: 1rem;
+            }
+
+            p {
+                color: #868585;
+                font-size: 1.125rem;
+            }
+        }
+    }
+}
