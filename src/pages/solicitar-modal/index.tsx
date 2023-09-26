@@ -55,14 +55,12 @@ const SecondStep = () => {
   const { frontPhoto, setFrontPhoto } = useCarPhotos();
 
   return (
-    <div>
-      <PhotoContainer
-        title="Posicione a parte frontal do veículo"
-        exampleImage={frontTruck}
-        photo={frontPhoto}
-        setPhoto={setFrontPhoto}
-      />
-    </div>
+    <PhotoContainer
+      title="Posicione a parte frontal do veículo"
+      exampleImage={frontTruck}
+      photo={frontPhoto}
+      setPhoto={setFrontPhoto}
+    />
   );
 };
 
@@ -70,14 +68,12 @@ const ThirdStep = () => {
   const { leftPhoto, setLeftPhoto } = useCarPhotos();
 
   return (
-    <div>
-      <PhotoContainer
-        title="Posicione a lateral esquerda do veículo"
-        exampleImage={leftTruck}
-        photo={leftPhoto}
-        setPhoto={setLeftPhoto}
-      />
-    </div>
+    <PhotoContainer
+      title="Posicione a lateral esquerda do veículo"
+      exampleImage={leftTruck}
+      photo={leftPhoto}
+      setPhoto={setLeftPhoto}
+    />
   );
 };
 
@@ -85,14 +81,12 @@ const FourthStep = () => {
   const { rightPhoto, setRightPhoto } = useCarPhotos();
 
   return (
-    <div>
-      <PhotoContainer
-        title="Posicione a lateral direita do veículo"
-        exampleImage={rightTruck}
-        photo={rightPhoto}
-        setPhoto={setRightPhoto}
-      />
-    </div>
+    <PhotoContainer
+      title="Posicione a lateral direita do veículo"
+      exampleImage={rightTruck}
+      photo={rightPhoto}
+      setPhoto={setRightPhoto}
+    />
   );
 };
 
@@ -100,14 +94,12 @@ const FifthStep = () => {
   const { backPhoto, setBackPhoto } = useCarPhotos();
 
   return (
-    <div>
-      <PhotoContainer
-        title="Posicione a parte traseira do veículo"
-        exampleImage={backTruck}
-        photo={backPhoto}
-        setPhoto={setBackPhoto}
-      />
-    </div>
+    <PhotoContainer
+      title="Posicione a parte traseira do veículo"
+      exampleImage={backTruck}
+      photo={backPhoto}
+      setPhoto={setBackPhoto}
+    />
   );
 };
 
@@ -186,9 +178,7 @@ export default function RequestModal() {
         {activeStep === 4 && <FifthStep />}
       </section>
 
-      <Button onClick={handleNext} variant="contained" className={styles.nextButton}>
-        Continuar
-      </Button>
+      <Button onClick={handleNext} variant="contained" className={styles.nextButton}>Continuar</Button>
     </main>
   );
 }
