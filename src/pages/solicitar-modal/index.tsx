@@ -175,6 +175,7 @@ const LastStep = () => {
 export default function RequestModal() {
   const router = useRouter();
   const [openBackdrop, setOpenBackdrop] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("Procurando Modal adequado...");
   const stepFactory = (id: number, label: string, isCompleted: boolean) => ({ id, label, isCompleted });
 
   const [activeStep, setActiveStep] = useState(0);
@@ -192,10 +193,14 @@ export default function RequestModal() {
       setOpenBackdrop(!openBackdrop)
 
       setTimeout(() => {
+        setLoadingMessage("Procurando motorista...")
+      }, 2000);
+
+      setTimeout(() => {
         setOpenBackdrop(!openBackdrop)
 
         router.push('/solicitacoes/1');
-      }, 2000);
+      }, 4000);
     }
 
     if (activeStep === steps.length - 1) return;
@@ -268,8 +273,17 @@ export default function RequestModal() {
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={openBackdrop}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          textAlign: 'center',
+          gap: 16
+        }}
       >
         <CircularProgress color="inherit" />
+        <h3>{loadingMessage}</h3>
       </Backdrop>
     </main>
   );
