@@ -33,7 +33,7 @@ const FirstStep = () => {
   const [lat, setLat] = useState<number>();
   const [checkedProblems, setCheckedProblems] = useState<string[]>([]);
   const [checkedLoads, setCheckedLoads] = useState<string[]>([]);
-  const [isCarLoaded, setIsCarLoaded] = useState(null);
+  const [isCarLoaded, setIsCarLoaded] = useState<boolean | undefined>();
 
   const optionsFactory = (id: number, description: string) => ({ id, description });
 
