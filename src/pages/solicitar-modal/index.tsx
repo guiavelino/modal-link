@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 import { PiMapPinFill } from "react-icons/pi";
 import { GiWeight } from "react-icons/gi";
-import { IconButton } from "@mui/material";
+import { Grid, IconButton } from "@mui/material";
 import { useRouter } from "next/router";
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -24,6 +24,7 @@ import rightTruck from "../../../public/right-truck.jpg";
 import backTruck from "../../../public/back-truck.jpg";
 import { useCarPhotos } from "@/hooks/useCarPhotos";
 import CustomizedDialogs from "@/components/Modal";
+import Image from "next/image";
 
 const FirstStep = () => {
   const [localization, setLocalization] = useState("");
@@ -36,7 +37,7 @@ const FirstStep = () => {
 
   const optionsFactory = (id: number, description: string) => ({ id, description });
 
-  const optionsVehicleProps = [optionsFactory(1, "Volvo - ABC-1234")];
+  const optionsVehicleProps = [optionsFactory(1, "Volvo FH16 - ABC-1234")];
 
   const position = async () => {
     await navigator.geolocation.getCurrentPosition(
@@ -162,10 +163,74 @@ const FifthStep = () => {
 };
 
 const LastStep = () => {
+  const [localization, setLocalization] = useState('');
+
+  const position = async () => {
+    await navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { longitude, latitude } = position?.coords;
+        const baseUrl = 'https://api.tiles.mapbox.com';
+        const data = await fetch(`${baseUrl}/v4/geocode/mapbox.places/${longitude},${latitude}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_GL_ACCESS_TOKEN ?? ''}`);
+        const json = await data.json();
+        setLocalization(json.features[0].place_name);
+      }
+    );
+  }
+
+  useEffect(() => {
+    const getData = async () => {
+      await position()
+    }
+
+    getData();
+  }, [])
 
   return (
-    <div>
+    <div className={styles.lastStepContainer}>
+      <article>
+        <h3>Veículo</h3>
+        <p>Volvo FH16 - ABC-1234</p>
+      </article>
+
+      <article>
+        <h3>Localização</h3>
+        <p>{localization}</p>
+      </article>
+  
+      <article>
+        <h3>Problema</h3>
+        <div className={styles.pillContainer}>
+          <span>Falta de combustível</span>
+          <span>Outros</span>
+        </div>
+        <h3 style={{ marginTop: 8 }}>Descrição do Problema</h3>
+        <p>Além da falta de combustível, o meu caminhão está preso em um buraco.</p>
+      </article>
       
+      <article>
+        <h3>Carga do veículo</h3>
+        <div className={styles.pillContainer}>
+          <span>Carga frágil</span>
+          <span>Carga perecível</span>
+        </div>
+        <h3 style={{ marginTop: 8 }}>Peso estimado da carga</h3>
+        <p>900 KG</p>
+      </article>
+
+      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{ margin: 0, height: '100%', width: '100%' }}>
+        <Grid item xs={6} style={{ margin: 0, padding: '0 4px 4px 0', width: '50%' }}>
+          <Image src={frontTruck} width={180} height={120} alt="" style={{ width: '100%'}} />
+        </Grid>
+        <Grid item xs={6} style={{ margin: 0, padding: '0 0 4px 4px', width: '50%' }}>
+          <Image src={leftTruck} width={180} height={120} alt="" style={{ width: '100%'}} />
+        </Grid>
+        <Grid item xs={6} style={{ margin: 0, padding: '0 4px 0 0', width: '50%' }}>
+          <Image src={rightTruck} width={180} height={120} alt="" style={{ width: '100%'}} />
+        </Grid>
+        <Grid item xs={6} style={{ margin: 0, padding: '0 0 0 4px', width: '50%' }}>
+          <Image src={backTruck} width={180} height={120} alt="" style={{ width: '100%'}} />
+        </Grid>
+      </Grid>
     </div>
   );
 };
