@@ -5,9 +5,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 
-export default function RowRadioButtonsGroup() {
+export default function RowRadioButtonsGroup({ setRadio }: any) {
   return (
-    
     <FormControl>
       <FormLabel id="demo-row-radio-buttons-group-label">O veículo possui carga?</FormLabel>
       <RadioGroup
@@ -15,9 +14,8 @@ export default function RowRadioButtonsGroup() {
         aria-labelledby="demo-row-radio-buttons-group-label"
         name="row-radio-buttons-group"
       >
-        <FormControlLabel value="Sim" control={<Radio />} label="Sim" />
-        <FormControlLabel value="Não" control={<Radio />} label="Não" />
-        
+        <FormControlLabel value="Sim" control={<Radio onClick={() => setRadio(true)} />} label="Sim" />
+        <FormControlLabel value="Não" control={<Radio onClick={() => setRadio(false)} />} label="Não" />
       </RadioGroup>
     </FormControl>
   );

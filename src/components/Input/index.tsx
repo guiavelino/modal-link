@@ -7,7 +7,8 @@ type InputProps = {
   type: string;
   placeholder: string;
   name: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onClick?: () => void;
   id?: string;
   icon?: React.ReactNode;
   edge?: "start" | "end" | false;
@@ -22,6 +23,7 @@ export default function Input({
   name,
   icon,
   onChange,
+  onClick,
   edge = "end",
   position = "end",
   value,
@@ -36,7 +38,6 @@ export default function Input({
         endAdornment={
           <InputAdornment position={position}>
             <IconButton
-              //   onClick={handleClickGetLocalization}
               edge={edge}
             >
               {icon}
@@ -47,6 +48,7 @@ export default function Input({
         className={styles.inputContainer}
         type={type}
         onChange={onChange}
+        onClick={onClick}
         value={value}
       />
     </FormControl>

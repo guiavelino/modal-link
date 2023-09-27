@@ -35,7 +35,7 @@ export default function PhotoContainer({ title, exampleImage, photo, setPhoto }:
         <Image src={exampleImage} width={332} height={216} alt="" />
       </div>
 
-      {openCam && <Camera ref={camera}  errorMessages={{}} />}
+      {/* {openCam && <Camera ref={camera}  errorMessages={{}} />} */}
     </main>
   );
 }

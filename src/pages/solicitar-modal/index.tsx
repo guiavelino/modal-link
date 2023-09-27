@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
@@ -7,6 +7,9 @@ import { MdKeyboardArrowLeft } from "react-icons/md";
 import { PiMapPinFill } from "react-icons/pi";
 import { GiWeight } from "react-icons/gi";
 import { IconButton } from "@mui/material";
+import { useRouter } from "next/router";
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import styles from "./styles.module.scss";
 import SelectComponent from "@/components/Select";
@@ -24,18 +27,38 @@ import { useCarPhotos } from "@/hooks/useCarPhotos";
 const FirstStep = () => {
   const [localization, setLocalization] = useState("");
   const [weightInKg, setWeightInKg] = useState(0);
+  const [lon, setLon] = useState<number>();
+  const [lat, setLat] = useState<number>();
+  const [checkedProblems, setCheckedProblems] = useState<string[]>([]);
+  const [checkedLoads, setCheckedLoads] = useState<string[]>([]);
+  const [radio, setRadio] = useState<boolean>();
 
   const optionsFactory = (id: number, description: string) => ({ id, description });
 
   const optionsVehicleProps = [
     optionsFactory(1, "Volvo - ABC-1234"),
-    optionsFactory(2, "BMW - 1515"),
-    optionsFactory(3, "FIAT - 6576"),
-    optionsFactory(4, "Chevrolet - 4546"),
-    optionsFactory(5, "Peugeot - 1212"),
+    optionsFactory(2, "Mercedes Benz Mb 709 - FIA-2023")
   ];
 
-  const optionsProblemsProps = [optionsFactory(1, "Falta combustível"), optionsFactory(2, "Pneu furado")];
+  const position = async () => {
+    await navigator.geolocation.getCurrentPosition(
+      position => {
+        setLon(position?.coords?.longitude)
+        setLat(position?.coords?.latitude)
+      }
+    );
+  }
+
+  const getLocation = async () => {
+    const baseUrl = 'https://api.tiles.mapbox.com';
+    const data = await fetch(`${baseUrl}/v4/geocode/mapbox.places/${lon},${lat}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_GL_ACCESS_TOKEN ?? ''}`);
+    const json = await data.json();
+    setLocalization(json.features[0].place_name);
+  }
+
+  useEffect(() => {
+    position()
+  }, [])
 
   return (
     <div className={styles.firstStepFormulary}>
@@ -46,31 +69,44 @@ const FirstStep = () => {
         placeholder="Localização"
         name="location"
         icon={<PiMapPinFill />}
-        onChange={(event) => {
-          const { value } = event.target;
-          setLocalization(value);
-        }}
+        onClick={getLocation}
         value={localization}
       />
 
-      <MultipleSelectChip placeholder="Problema(s)" options={["Falta de combustível", "Pneu furado"]} />
+      <MultipleSelectChip 
+        placeholder="Problema(s)" 
+        options={["Falta de combustível", "Pneu furado", "Outros"]} 
+        checkedOptions={checkedProblems}
+        setCheckedOptions={setCheckedProblems}
+      />
 
       <TextArea placeholder="Descreva o problema do veículo..." />
 
-      <Radio />
-
-      <MultipleSelectChip placeholder="Tipo de carga" options={["Carga frágil", "Carga perecível"]} />
-
-      <Input
-        onChange={(event) => {
-          const { value } = event.target;
-          setWeightInKg(Number(value));
-        }}
-        type="number"
-        placeholder="Peso estimado da carga em kg"
-        name="load"
-        icon={<GiWeight />}
+      <Radio 
+        setRadio={setRadio}
       />
+
+      {radio && (
+        <>
+          <MultipleSelectChip 
+            placeholder="Tipo de carga" 
+            options={["Carga frágil", "Carga perecível"]} 
+            checkedOptions={checkedLoads} 
+            setCheckedOptions={setCheckedLoads} 
+          />
+
+          <Input
+            onChange={(event) => {
+              const { value } = event.target;
+              setWeightInKg(Number(value));
+            }}
+            type="number"
+            placeholder="Peso estimado da carga em kg"
+            name="load"
+            icon={<GiWeight />}
+          />
+        </>
+      )}
     </div>
   );
 };
@@ -127,7 +163,18 @@ const FifthStep = () => {
   );
 };
 
+const LastStep = () => {
+
+  return (
+    <div>
+      
+    </div>
+  );
+};
+
 export default function RequestModal() {
+  const router = useRouter();
+  const [openBackdrop, setOpenBackdrop] = useState(false);
   const stepFactory = (id: number, label: string, isCompleted: boolean) => ({ id, label, isCompleted });
 
   const [activeStep, setActiveStep] = useState(0);
@@ -141,6 +188,16 @@ export default function RequestModal() {
   ]);
 
   const handleNext = () => {
+    if (activeStep === 5) {
+      setOpenBackdrop(!openBackdrop)
+
+      setTimeout(() => {
+        setOpenBackdrop(!openBackdrop)
+
+        router.push('/solicitacoes/1');
+      }, 2000);
+    }
+
     if (activeStep === steps.length - 1) return;
 
     const newSteps = steps.map((step) => {
@@ -200,9 +257,20 @@ export default function RequestModal() {
         {activeStep === 2 && <ThirdStep />}
         {activeStep === 3 && <FourthStep />}
         {activeStep === 4 && <FifthStep />}
+        {activeStep === 5 && <LastStep />}
       </section>
 
-      <Button onClick={handleNext} variant="contained" className={styles.nextButton}>Continuar</Button>
+      <Button onClick={handleNext} variant="contained" className={styles.nextButton}>
+        {activeStep === 5 ? 'Confirmar' : 'Continuar'}
+      </Button>
+
+
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openBackdrop}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </main>
   );
 }

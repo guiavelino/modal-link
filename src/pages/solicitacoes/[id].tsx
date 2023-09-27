@@ -3,6 +3,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useEffect, useRef, useState } from 'react';
 import { Avatar, IconButton, Step, StepLabel, Stepper, Typography } from '@mui/material';
 import { MdKeyboardArrowLeft } from 'react-icons/md';
+import { useRouter } from 'next/router';
 
 import styles from './styles.module.scss';
 
@@ -32,21 +33,32 @@ function VerticalLinearStepper() {
 export default function Requests() {
     const mapContainer = useRef<any>(null);
     const map = useRef<mapboxgl.Map | any>(null);
+    const router = useRouter();
     mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_GL_ACCESS_TOKEN ?? '';
     
+    const position = async () => {
+        await navigator.geolocation.getCurrentPosition(
+          position => {
+            map.current = new mapboxgl.Map({
+                container: mapContainer.current,
+                style: 'mapbox://styles/mapbox/streets-v12',
+                center: [position?.coords?.longitude, position?.coords?.latitude],
+                zoom: 15
+            });
+
+            new mapboxgl.Marker().setLngLat([position?.coords?.longitude, position?.coords?.latitude]).addTo(map.current);
+          }
+        );
+    }
+
     useEffect(() => {
-        map.current = new mapboxgl.Map({
-            container: mapContainer.current,
-            style: 'mapbox://styles/mapbox/streets-v12',
-            center: [-122.486052, 37.830348],
-            zoom: 15
-        })
+        position();
     }, []);
 
     return (
-        <main>
+        <main className={styles.reqContainer}>
             <header className={styles.header}>
-                <IconButton color="inherit">
+                <IconButton color="inherit" onClick={() => router.back()} style={{ margin: "0", padding: "0" }}>
                     <MdKeyboardArrowLeft size={32}/>
                 </IconButton>
                 <h1>Status da solicitação</h1>

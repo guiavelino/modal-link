@@ -20,17 +20,18 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
 type SelectChipProps = {
   placeholder: string;
   options: string[];
+  checkedOptions: string[];
+  setCheckedOptions: React.Dispatch<React.SetStateAction<string[]>>
 };
 
-export default function MultipleSelectChip({ placeholder, options }: SelectChipProps) {
+export default function MultipleSelectChip({ placeholder, options, checkedOptions, setCheckedOptions }: SelectChipProps) {
   const theme = useTheme();
-  const [personName, setPersonName] = React.useState<string[]>([]);
 
-  const handleChange = (event: SelectChangeEvent<typeof personName>) => {
+  const handleChange = (event: SelectChangeEvent<typeof checkedOptions>) => {
     const {
       target: { value },
     } = event;
-    setPersonName(typeof value === "string" ? value.split(",") : value);
+    setCheckedOptions(typeof value === "string" ? value.split(",") : value);
   };
 
   return (
@@ -41,7 +42,7 @@ export default function MultipleSelectChip({ placeholder, options }: SelectChipP
           labelId="multiple-chip-label"
           id="multiple-chip"
           multiple
-          value={personName}
+          value={checkedOptions}
           onChange={handleChange}
           input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
           renderValue={(selected) => (
@@ -54,7 +55,7 @@ export default function MultipleSelectChip({ placeholder, options }: SelectChipP
           className={styles.selectChipContainer}
         >
           {options.map((option) => (
-            <MenuItem key={option} value={option} style={getStyles(option, personName, theme)}>
+            <MenuItem key={option} value={option} style={getStyles(option, checkedOptions, theme)}>
               {option}
             </MenuItem>
           ))}
