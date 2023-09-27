@@ -7,4 +7,10 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 600;
+
+  ::placeholder {
+    color: #9f9f9f;
+    font-weight: 600;
+    font-size: 14px;
+  }
 }

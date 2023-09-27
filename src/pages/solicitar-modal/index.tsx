@@ -6,17 +6,17 @@ import Button from "@mui/material/Button";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 import { PiMapPinFill } from "react-icons/pi";
 import { GiWeight } from "react-icons/gi";
-import { Grid, IconButton } from "@mui/material";
+import { Grid, IconButton, Radio } from "@mui/material";
 import { useRouter } from "next/router";
-import Backdrop from '@mui/material/Backdrop';
-import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import styles from "./styles.module.scss";
 import SelectComponent from "@/components/Select";
 import Input from "@/components/Input";
 import MultipleSelectChip from "@/components/SelectChip";
 import TextArea from "@/components/TextArea";
-import Radio from "@/components/Radio";
+import RadioButtonsGroup from "@/components/RadioButtonsGroup";
 import PhotoContainer from "@/components/PhotoContainer";
 import frontTruck from "../../../public/front-truck.jpg";
 import leftTruck from "../../../public/left-truck.jpg";
@@ -33,31 +33,33 @@ const FirstStep = () => {
   const [lat, setLat] = useState<number>();
   const [checkedProblems, setCheckedProblems] = useState<string[]>([]);
   const [checkedLoads, setCheckedLoads] = useState<string[]>([]);
-  const [radio, setRadio] = useState<boolean>();
+  const [isCarLoaded, setIsCarLoaded] = useState(null);
 
   const optionsFactory = (id: number, description: string) => ({ id, description });
 
   const optionsVehicleProps = [optionsFactory(1, "Volvo FH16 - ABC-1234")];
 
   const position = async () => {
-    await navigator.geolocation.getCurrentPosition(
-      position => {
-        setLon(position?.coords?.longitude)
-        setLat(position?.coords?.latitude)
-      }
-    );
-  }
+    await navigator.geolocation.getCurrentPosition((position) => {
+      setLon(position?.coords?.longitude);
+      setLat(position?.coords?.latitude);
+    });
+  };
 
   const getLocation = async () => {
-    const baseUrl = 'https://api.tiles.mapbox.com';
-    const data = await fetch(`${baseUrl}/v4/geocode/mapbox.places/${lon},${lat}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_GL_ACCESS_TOKEN ?? ''}`);
+    const baseUrl = "https://api.tiles.mapbox.com";
+    const data = await fetch(
+      `${baseUrl}/v4/geocode/mapbox.places/${lon},${lat}.json?access_token=${
+        process.env.NEXT_PUBLIC_MAPBOX_GL_ACCESS_TOKEN ?? ""
+      }`
+    );
     const json = await data.json();
     setLocalization(json.features[0].place_name);
-  }
+  };
 
   useEffect(() => {
-    position()
-  }, [])
+    position();
+  }, []);
 
   return (
     <div className={styles.firstStepFormulary}>
@@ -72,26 +74,34 @@ const FirstStep = () => {
         value={localization}
       />
 
-      <MultipleSelectChip 
-        placeholder="Problema(s)" 
-        options={["Falta de combustível", "Pneu furado", "Outros"]} 
+      <MultipleSelectChip
+        placeholder="Problema(s)"
+        options={["Falta de combustível", "Pneu furado", "Outros"]}
         checkedOptions={checkedProblems}
         setCheckedOptions={setCheckedProblems}
       />
 
       <TextArea placeholder="Descreva o problema do veículo..." />
 
-      <Radio 
-        setRadio={setRadio}
+      <RadioButtonsGroup
+        FormControlLabelChildren={[
+          { value: 1, label: "Sim", control: <Radio /> },
+          { value: 0, label: "Não", control: <Radio /> },
+        ]}
+        formLabel="O veículo possui carga?"
+        onChange={(event) => {
+          const { value } = event.target;
+          setIsCarLoaded(Boolean(Number(value)));
+        }}
       />
 
-      {radio && (
+      {isCarLoaded && (
         <>
-          <MultipleSelectChip 
-            placeholder="Tipo de carga" 
-            options={["Carga frágil", "Carga perecível"]} 
-            checkedOptions={checkedLoads} 
-            setCheckedOptions={setCheckedLoads} 
+          <MultipleSelectChip
+            placeholder="Tipo de carga"
+            options={["Carga frágil", "Carga perecível"]}
+            checkedOptions={checkedLoads}
+            setCheckedOptions={setCheckedLoads}
           />
 
           <Input
@@ -163,27 +173,29 @@ const FifthStep = () => {
 };
 
 const LastStep = () => {
-  const [localization, setLocalization] = useState('');
+  const [localization, setLocalization] = useState("");
 
   const position = async () => {
-    await navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { longitude, latitude } = position?.coords;
-        const baseUrl = 'https://api.tiles.mapbox.com';
-        const data = await fetch(`${baseUrl}/v4/geocode/mapbox.places/${longitude},${latitude}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_GL_ACCESS_TOKEN ?? ''}`);
-        const json = await data.json();
-        setLocalization(json.features[0].place_name);
-      }
-    );
-  }
+    await navigator.geolocation.getCurrentPosition(async (position) => {
+      const { longitude, latitude } = position?.coords;
+      const baseUrl = "https://api.tiles.mapbox.com";
+      const data = await fetch(
+        `${baseUrl}/v4/geocode/mapbox.places/${longitude},${latitude}.json?access_token=${
+          process.env.NEXT_PUBLIC_MAPBOX_GL_ACCESS_TOKEN ?? ""
+        }`
+      );
+      const json = await data.json();
+      setLocalization(json.features[0].place_name);
+    });
+  };
 
   useEffect(() => {
     const getData = async () => {
-      await position()
-    }
+      await position();
+    };
 
     getData();
-  }, [])
+  }, []);
 
   return (
     <div className={styles.lastStepContainer}>
@@ -196,7 +208,7 @@ const LastStep = () => {
         <h3>Localização</h3>
         <p>{localization}</p>
       </article>
-  
+
       <article>
         <h3>Problema</h3>
         <div className={styles.pillContainer}>
@@ -206,7 +218,7 @@ const LastStep = () => {
         <h3 style={{ marginTop: 8 }}>Descrição do Problema</h3>
         <p>Além da falta de combustível, o meu caminhão está preso em um buraco.</p>
       </article>
-      
+
       <article>
         <h3>Carga do veículo</h3>
         <div className={styles.pillContainer}>
@@ -217,18 +229,23 @@ const LastStep = () => {
         <p>900 KG</p>
       </article>
 
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{ margin: 0, height: '100%', width: '100%' }}>
-        <Grid item xs={6} style={{ margin: 0, padding: '0 4px 4px 0', width: '50%' }}>
-          <Image src={frontTruck} width={180} height={120} alt="" style={{ width: '100%'}} />
+      <Grid
+        container
+        rowSpacing={1}
+        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+        style={{ margin: 0, height: "100%", width: "100%" }}
+      >
+        <Grid item xs={6} style={{ margin: 0, padding: "0 4px 4px 0", width: "50%" }}>
+          <Image src={frontTruck} width={180} height={120} alt="" style={{ width: "100%" }} />
         </Grid>
-        <Grid item xs={6} style={{ margin: 0, padding: '0 0 4px 4px', width: '50%' }}>
-          <Image src={leftTruck} width={180} height={120} alt="" style={{ width: '100%'}} />
+        <Grid item xs={6} style={{ margin: 0, padding: "0 0 4px 4px", width: "50%" }}>
+          <Image src={leftTruck} width={180} height={120} alt="" style={{ width: "100%" }} />
         </Grid>
-        <Grid item xs={6} style={{ margin: 0, padding: '0 4px 0 0', width: '50%' }}>
-          <Image src={rightTruck} width={180} height={120} alt="" style={{ width: '100%'}} />
+        <Grid item xs={6} style={{ margin: 0, padding: "0 4px 0 0", width: "50%" }}>
+          <Image src={rightTruck} width={180} height={120} alt="" style={{ width: "100%" }} />
         </Grid>
-        <Grid item xs={6} style={{ margin: 0, padding: '0 0 0 4px', width: '50%' }}>
-          <Image src={backTruck} width={180} height={120} alt="" style={{ width: '100%'}} />
+        <Grid item xs={6} style={{ margin: 0, padding: "0 0 0 4px", width: "50%" }}>
+          <Image src={backTruck} width={180} height={120} alt="" style={{ width: "100%" }} />
         </Grid>
       </Grid>
     </div>
@@ -254,21 +271,21 @@ export default function RequestModal() {
 
   const handleNext = () => {
     if (activeStep === 5) {
-      setOpenBackdrop(!openBackdrop)
+      setOpenBackdrop(!openBackdrop);
 
       setTimeout(() => {
-        setLoadingMessage("Procurando motorista...")
+        setLoadingMessage("Procurando motorista...");
       }, 2000);
 
       setTimeout(() => {
-        setOpenBackdrop(!openBackdrop)
+        setOpenBackdrop(!openBackdrop);
 
-        router.push('/solicitacoes/1');
+        router.push("/solicitacoes/1");
       }, 4000);
     }
 
     if (activeStep === 4) {
-      setOpenModal(!openModal)
+      setOpenModal(!openModal);
     }
 
     if (activeStep === steps.length - 1) return;
@@ -334,21 +351,21 @@ export default function RequestModal() {
       </section>
 
       <Button onClick={handleNext} variant="contained" className={styles.nextButton}>
-        {activeStep === 5 ? 'Confirmar' : 'Continuar'}
+        {activeStep === 5 ? "Confirmar" : "Continuar"}
       </Button>
-          
+
       <CustomizedDialogs open={openModal} setOpen={setOpenModal} />
 
       <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={openBackdrop}
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          textAlign: 'center',
-          gap: 16
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+          textAlign: "center",
+          gap: 16,
         }}
       >
         <CircularProgress color="inherit" />

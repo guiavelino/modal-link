@@ -21,10 +21,15 @@ type SelectChipProps = {
   placeholder: string;
   options: string[];
   checkedOptions: string[];
-  setCheckedOptions: React.Dispatch<React.SetStateAction<string[]>>
+  setCheckedOptions: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
-export default function MultipleSelectChip({ placeholder, options, checkedOptions, setCheckedOptions }: SelectChipProps) {
+export default function MultipleSelectChip({
+  placeholder,
+  options,
+  checkedOptions,
+  setCheckedOptions,
+}: SelectChipProps) {
   const theme = useTheme();
 
   const handleChange = (event: SelectChangeEvent<typeof checkedOptions>) => {
@@ -37,7 +42,9 @@ export default function MultipleSelectChip({ placeholder, options, checkedOption
   return (
     <div>
       <FormControl sx={{ width: "100%" }}>
-        <InputLabel id="multiple-chip-label">{placeholder}</InputLabel>
+        <InputLabel id="multiple-chip-label" className={styles.inputLabel}>
+          {placeholder}
+        </InputLabel>
         <Select
           labelId="multiple-chip-label"
           id="multiple-chip"
@@ -48,7 +55,7 @@ export default function MultipleSelectChip({ placeholder, options, checkedOption
           renderValue={(selected) => (
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
               {selected.map((value) => (
-                <Chip key={value} label={value} />
+                <Chip key={value} label={value} className={styles.chip} />
               ))}
             </Box>
           )}

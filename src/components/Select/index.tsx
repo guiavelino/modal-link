@@ -23,7 +23,9 @@ export default function SelectComponent({ placeholder, optionsProps, id = "selec
 
   return (
     <FormControl>
-      <InputLabel id="select-label">{placeholder}</InputLabel>
+      <InputLabel id="select-label" className={styles.inputLabel}>
+        {placeholder}
+      </InputLabel>
       <Select
         labelId="select-label"
         id={id}
