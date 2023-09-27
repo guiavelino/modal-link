@@ -61,7 +61,7 @@ export default function MultipleSelectChip({
           )}
           className={styles.selectChipContainer}
         >
-          {options.map((option) => (
+          {options?.map((option) => (
             <MenuItem key={option} value={option} style={getStyles(option, checkedOptions, theme)}>
               {option}
             </MenuItem>

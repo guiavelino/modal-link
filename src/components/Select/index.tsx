@@ -12,13 +12,19 @@ type SelectComponentProps = {
   placeholder: string;
   optionsProps: OptionsProps[];
   id?: string;
+  selected?: number;
+  setSelected: (value: number) => void;
 };
 
-export default function SelectComponent({ placeholder, optionsProps, id = "select" }: SelectComponentProps) {
-  const [selected, setSeletected] = useState<number | null>(null);
-
+export default function SelectComponent({
+  placeholder,
+  optionsProps,
+  id = "select",
+  selected,
+  setSelected,
+}: SelectComponentProps) {
   const handleChange = (event: any) => {
-    setSeletected(event.target.value as number);
+    setSelected(event.target.value as number);
   };
 
   return (

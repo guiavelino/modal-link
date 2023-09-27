@@ -22,22 +22,25 @@ import frontTruck from "../../../public/front-truck.jpg";
 import leftTruck from "../../../public/left-truck.jpg";
 import rightTruck from "../../../public/right-truck.jpg";
 import backTruck from "../../../public/back-truck.jpg";
-import { useCarPhotos } from "@/hooks/useCarPhotos";
+import { useRequestModal } from "@/hooks/useRequestModal";
 import CustomizedDialogs from "@/components/Modal";
 import Image from "next/image";
+import { Vehicle } from "@prisma/client";
 
 const FirstStep = () => {
-  const [localization, setLocalization] = useState("");
+  const [vehicles] = useState<Pick<Vehicle, "id" | "transitBoard">[]>([
+    { id: 1, transitBoard: "Volvo FH16 - ABC-1234" },
+  ]);
+
+  const { selectedVehicle, setSelectedVehicle, localization, setLocalization, problems, setProblems } =
+    useRequestModal();
+
   const [weightInKg, setWeightInKg] = useState(0);
   const [lon, setLon] = useState<number>();
   const [lat, setLat] = useState<number>();
-  const [checkedProblems, setCheckedProblems] = useState<string[]>([]);
+
   const [checkedLoads, setCheckedLoads] = useState<string[]>([]);
   const [isCarLoaded, setIsCarLoaded] = useState<boolean | undefined>();
-
-  const optionsFactory = (id: number, description: string) => ({ id, description });
-
-  const optionsVehicleProps = [optionsFactory(1, "Volvo FH16 - ABC-1234")];
 
   const position = async () => {
     await navigator.geolocation.getCurrentPosition((position) => {
@@ -63,7 +66,18 @@ const FirstStep = () => {
 
   return (
     <div className={styles.firstStepFormulary}>
-      <SelectComponent placeholder="Veículo" optionsProps={optionsVehicleProps} />
+      <SelectComponent
+        placeholder="Veículo"
+        optionsProps={vehicles.map((vehicle) => {
+          return { id: vehicle.id, description: vehicle.transitBoard };
+        })}
+        selected={selectedVehicle?.id}
+        setSelected={(id) =>
+          setSelectedVehicle(
+            vehicles.find((vehicle) => vehicle.id === id) ?? { id: 1, transitBoard: "Volvo FH16 - ABC-1234" }
+          )
+        }
+      />
 
       <Input
         type="text"
@@ -77,8 +91,8 @@ const FirstStep = () => {
       <MultipleSelectChip
         placeholder="Problema(s)"
         options={["Falta de combustível", "Pneu furado", "Outros"]}
-        checkedOptions={checkedProblems}
-        setCheckedOptions={setCheckedProblems}
+        checkedOptions={problems}
+        setCheckedOptions={setProblems}
       />
 
       <TextArea placeholder="Descreva o problema do veículo..." />
@@ -121,7 +135,7 @@ const FirstStep = () => {
 };
 
 const SecondStep = () => {
-  const { frontPhoto, setFrontPhoto } = useCarPhotos();
+  const { frontPhoto, setFrontPhoto } = useRequestModal();
 
   return (
     <PhotoContainer
@@ -134,7 +148,7 @@ const SecondStep = () => {
 };
 
 const ThirdStep = () => {
-  const { leftPhoto, setLeftPhoto } = useCarPhotos();
+  const { leftPhoto, setLeftPhoto } = useRequestModal();
 
   return (
     <PhotoContainer
@@ -147,7 +161,7 @@ const ThirdStep = () => {
 };
 
 const FourthStep = () => {
-  const { rightPhoto, setRightPhoto } = useCarPhotos();
+  const { rightPhoto, setRightPhoto } = useRequestModal();
 
   return (
     <PhotoContainer
@@ -160,7 +174,7 @@ const FourthStep = () => {
 };
 
 const FifthStep = () => {
-  const { backPhoto, setBackPhoto } = useCarPhotos();
+  const { backPhoto, setBackPhoto } = useRequestModal();
 
   return (
     <PhotoContainer
