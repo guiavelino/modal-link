@@ -29,7 +29,12 @@
         font-size: 0.875rem;
         font-weight: bold;
         color: #FFB74D;
+        border-color: #FFB74D;
         width: 100%;
         align-items: center;
+
+        & > div:nth-child(1) {
+            color: #FFB74D;
+        }
     }
 }

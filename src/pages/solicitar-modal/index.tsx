@@ -36,10 +36,7 @@ const FirstStep = () => {
 
   const optionsFactory = (id: number, description: string) => ({ id, description });
 
-  const optionsVehicleProps = [
-    optionsFactory(1, "Volvo - ABC-1234"),
-    // optionsFactory(2, "Mercedes Benz Mb 709 - FIA-2023")
-  ];
+  const optionsVehicleProps = [optionsFactory(1, "Volvo - ABC-1234")];
 
   const position = async () => {
     await navigator.geolocation.getCurrentPosition(
