@@ -6,14 +6,14 @@ import Button from "@mui/material/Button";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 import { PiMapPinFill } from "react-icons/pi";
 import { GiWeight } from "react-icons/gi";
-import { IconButton } from "@mui/material";
+import { IconButton, Radio } from "@mui/material";
 
 import styles from "./styles.module.scss";
 import SelectComponent from "@/components/Select";
 import Input from "@/components/Input";
 import MultipleSelectChip from "@/components/SelectChip";
 import TextArea from "@/components/TextArea";
-import Radio from "@/components/Radio";
+import RadioButtonsGroup from "@/components/RadioButtonsGroup";
 import PhotoContainer from "@/components/PhotoContainer";
 import frontTruck from "../../../public/front-truck.jpg";
 import leftTruck from "../../../public/left-truck.jpg";
@@ -24,6 +24,7 @@ import { useCarPhotos } from "@/hooks/useCarPhotos";
 const FirstStep = () => {
   const [localization, setLocalization] = useState("");
   const [weightInKg, setWeightInKg] = useState(0);
+  const [isCarLoaded, setIsCarLoaded] = useState(false);
 
   const optionsFactory = (id: number, description: string) => ({ id, description });
 
@@ -57,7 +58,17 @@ const FirstStep = () => {
 
       <TextArea placeholder="Descreva o problema do veículo..." />
 
-      <Radio />
+      <RadioButtonsGroup
+        FormControlLabelChildren={[
+          { value: 1, label: "Sim", control: <Radio /> },
+          { value: 0, label: "Não", control: <Radio /> },
+        ]}
+        formLabel="O veículo possui carga?"
+        onChange={(event) => {
+          const { value } = event.target;
+          setIsCarLoaded(Boolean(value));
+        }}
+      />
 
       <MultipleSelectChip placeholder="Tipo de carga" options={["Carga frágil", "Carga perecível"]} />
 
@@ -202,7 +213,9 @@ export default function RequestModal() {
         {activeStep === 4 && <FifthStep />}
       </section>
 
-      <Button onClick={handleNext} variant="contained" className={styles.nextButton}>Continuar</Button>
+      <Button onClick={handleNext} variant="contained" className={styles.nextButton}>
+        Continuar
+      </Button>
     </main>
   );
 }

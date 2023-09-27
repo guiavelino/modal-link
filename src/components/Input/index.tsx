@@ -30,7 +30,9 @@ export default function Input({
 }: InputProps) {
   return (
     <FormControl variant={variant}>
-      <InputLabel htmlFor={name}>{placeholder}</InputLabel>
+      <InputLabel htmlFor={name} className={styles.inputLabel}>
+        {placeholder}
+      </InputLabel>
       <OutlinedInput
         id={id}
         endAdornment={

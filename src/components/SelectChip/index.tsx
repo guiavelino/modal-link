@@ -20,9 +20,10 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
 type SelectChipProps = {
   placeholder: string;
   options: string[];
+  id?: string;
 };
 
-export default function MultipleSelectChip({ placeholder, options }: SelectChipProps) {
+export default function MultipleSelectChip({ placeholder, options, id = "select-chip" }: SelectChipProps) {
   const theme = useTheme();
   const [personName, setPersonName] = React.useState<string[]>([]);
 
@@ -34,32 +35,32 @@ export default function MultipleSelectChip({ placeholder, options }: SelectChipP
   };
 
   return (
-    <div>
-      <FormControl sx={{ width: "100%" }}>
-        <InputLabel id="multiple-chip-label">{placeholder}</InputLabel>
-        <Select
-          labelId="multiple-chip-label"
-          id="multiple-chip"
-          multiple
-          value={personName}
-          onChange={handleChange}
-          input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-          renderValue={(selected) => (
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-              {selected.map((value) => (
-                <Chip key={value} label={value} />
-              ))}
-            </Box>
-          )}
-          className={styles.selectChipContainer}
-        >
-          {options.map((option) => (
-            <MenuItem key={option} value={option} style={getStyles(option, personName, theme)}>
-              {option}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </div>
+    <FormControl>
+      <InputLabel id="multiple-chip-label" className={styles.inputLabel}>
+        {placeholder}
+      </InputLabel>
+      <Select
+        labelId="multiple-chip-label"
+        id={id}
+        multiple
+        value={personName}
+        onChange={handleChange}
+        input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+        renderValue={(selected) => (
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+            {selected.map((value) => (
+              <Chip key={value} label={value} className={styles.chip} />
+            ))}
+          </Box>
+        )}
+        className={styles.selectChipContainer}
+      >
+        {options.map((option) => (
+          <MenuItem key={option} value={option} style={getStyles(option, personName, theme)}>
+            {option}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
   );
 }
