@@ -23,6 +23,7 @@ import leftTruck from "../../../public/left-truck.jpg";
 import rightTruck from "../../../public/right-truck.jpg";
 import backTruck from "../../../public/back-truck.jpg";
 import { useCarPhotos } from "@/hooks/useCarPhotos";
+import CustomizedDialogs from "@/components/Modal";
 
 const FirstStep = () => {
   const [localization, setLocalization] = useState("");
@@ -37,7 +38,7 @@ const FirstStep = () => {
 
   const optionsVehicleProps = [
     optionsFactory(1, "Volvo - ABC-1234"),
-    optionsFactory(2, "Mercedes Benz Mb 709 - FIA-2023")
+    // optionsFactory(2, "Mercedes Benz Mb 709 - FIA-2023")
   ];
 
   const position = async () => {
@@ -174,6 +175,7 @@ const LastStep = () => {
 
 export default function RequestModal() {
   const router = useRouter();
+  const [openModal, setOpenModal] = useState(false);
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Procurando Modal adequado...");
   const stepFactory = (id: number, label: string, isCompleted: boolean) => ({ id, label, isCompleted });
@@ -201,6 +203,10 @@ export default function RequestModal() {
 
         router.push('/solicitacoes/1');
       }, 4000);
+    }
+
+    if (activeStep === 4) {
+      setOpenModal(!openModal)
     }
 
     if (activeStep === steps.length - 1) return;
@@ -268,7 +274,8 @@ export default function RequestModal() {
       <Button onClick={handleNext} variant="contained" className={styles.nextButton}>
         {activeStep === 5 ? 'Confirmar' : 'Continuar'}
       </Button>
-
+          
+      <CustomizedDialogs open={openModal} setOpen={setOpenModal} />
 
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
