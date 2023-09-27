@@ -1,6 +1,5 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Image, { StaticImageData } from "next/image";
-import { Camera } from "react-camera-pro";
 import Alert from "@mui/material/Alert";
 import { BiSolidCamera } from "react-icons/bi";
 
@@ -14,7 +13,6 @@ type PhotoContainerProps = {
 };
 
 export default function PhotoContainer({ title, exampleImage, photo, setPhoto }: PhotoContainerProps) {
-  const camera = useRef(null);
   const [openCam, setOpenCam] = useState(false);
 
   return (
@@ -34,8 +32,6 @@ export default function PhotoContainer({ title, exampleImage, photo, setPhoto }:
         <h1>Exemplo</h1>
         <Image src={exampleImage} width={332} height={216} alt="" />
       </div>
-
-      {/* {openCam && <Camera ref={camera}  errorMessages={{}} />} */}
     </main>
   );
 }
