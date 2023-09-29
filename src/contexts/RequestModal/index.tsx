@@ -6,11 +6,9 @@ export const RequestModalContext = createContext({} as IRequestModalContext);
 
 export function RequestModalProvider({ children }: RequestModalProviderProps) {
   const [selectedVehicle, setSelectedVehicle] = useState<TVehicle | null>(null);
-
   const [localization, setLocalization] = useState("");
-
   const [problems, setProblems] = useState<string[]>([]);
-
+  const [problemDescription, setProblemDescription] = useState("");
   const [frontPhoto, setFrontPhoto] = useState("");
   const [leftPhoto, setLeftPhoto] = useState("");
   const [rightPhoto, setRightPhoto] = useState("");
@@ -37,6 +35,8 @@ export function RequestModalProvider({ children }: RequestModalProviderProps) {
         setProblems,
         selectedVehicle,
         setSelectedVehicle,
+        problemDescription,
+        setProblemDescription,
       }}
     >
       {children}

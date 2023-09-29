@@ -6,9 +6,11 @@ import styles from "./styles.module.scss";
 
 type TextAreaProps = {
   placeholder?: string;
+  value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
 };
 
-export default function TextArea({ placeholder }: TextAreaProps = { placeholder: "" }) {
+export default function TextArea({ placeholder, onChange, value }: TextAreaProps) {
   return (
     <Box
       component="form"
@@ -20,10 +22,14 @@ export default function TextArea({ placeholder }: TextAreaProps = { placeholder:
     >
       <TextField
         className={styles.textArea}
-        id="outlined-multiline-static"
         placeholder={placeholder}
         multiline
         rows={4}
+        value={value}
+        onChange={onChange}
+        InputProps={{
+          className: styles.multilineField,
+        }}
       />
     </Box>
   );

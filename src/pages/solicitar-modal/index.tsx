@@ -32,8 +32,16 @@ const FirstStep = () => {
     { id: 1, transitBoard: "Volvo FH16 - ABC-1234" },
   ]);
 
-  const { selectedVehicle, setSelectedVehicle, localization, setLocalization, problems, setProblems } =
-    useRequestModal();
+  const {
+    selectedVehicle,
+    setSelectedVehicle,
+    localization,
+    setLocalization,
+    problems,
+    setProblems,
+    problemDescription,
+    setProblemDescription,
+  } = useRequestModal();
 
   const [weightInKg, setWeightInKg] = useState(0);
   const [lon, setLon] = useState<number>();
@@ -95,7 +103,14 @@ const FirstStep = () => {
         setCheckedOptions={setProblems}
       />
 
-      <TextArea placeholder="Descreva o problema do veículo..." />
+      <TextArea
+        placeholder="Descreva o problema do veículo..."
+        value={problemDescription}
+        onChange={(event) => {
+          const { value } = event.target;
+          setProblemDescription(value);
+        }}
+      />
 
       <RadioButtonsGroup
         FormControlLabelChildren={[

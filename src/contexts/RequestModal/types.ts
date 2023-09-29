@@ -17,6 +17,8 @@ export interface IRequestModalContext {
   setProblems: React.Dispatch<React.SetStateAction<string[]>>;
   selectedVehicle?: TVehicle | null;
   setSelectedVehicle: (vehicle: TVehicle) => void;
+  problemDescription: string;
+  setProblemDescription: (description: string) => void;
 }
 
 export type RequestModalProviderProps = {
