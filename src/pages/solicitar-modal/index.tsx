@@ -41,14 +41,16 @@ const FirstStep = () => {
     setProblems,
     problemDescription,
     setProblemDescription,
+    isCarLoaded,
+    setIsCarLoaded,
+    weightInKg,
+    setWeightInKg,
+    typeOfLoad,
+    setTypeOfLoad,
   } = useRequestModal();
 
-  const [weightInKg, setWeightInKg] = useState(0);
   const [lon, setLon] = useState<number>();
   const [lat, setLat] = useState<number>();
-
-  const [checkedLoads, setCheckedLoads] = useState<string[]>([]);
-  const [isCarLoaded, setIsCarLoaded] = useState<boolean | undefined>();
 
   const position = async () => {
     await navigator.geolocation.getCurrentPosition((position) => {
@@ -118,9 +120,9 @@ const FirstStep = () => {
           { value: 0, label: "Não", control: <Radio /> },
         ]}
         formLabel="O veículo possui carga?"
+        value={isCarLoaded ? 1 : 0}
         onChange={(event) => {
-          const { value } = event.target;
-          setIsCarLoaded(Boolean(Number(value)));
+          setIsCarLoaded(Number(event.target.value) === 1);
         }}
       />
 
@@ -129,8 +131,8 @@ const FirstStep = () => {
           <MultipleSelectChip
             placeholder="Tipo de carga"
             options={["Carga frágil", "Carga perecível"]}
-            checkedOptions={checkedLoads}
-            setCheckedOptions={setCheckedLoads}
+            checkedOptions={typeOfLoad}
+            setCheckedOptions={setTypeOfLoad}
           />
 
           <Input
@@ -142,6 +144,7 @@ const FirstStep = () => {
             placeholder="Peso estimado da carga em kg"
             name="load"
             icon={<GiWeight />}
+            value={String(weightInKg) ?? undefined}
           />
         </>
       )}
@@ -283,20 +286,10 @@ const LastStep = () => {
 
 export default function RequestModal() {
   const router = useRouter();
+  const { activeStep, setActiveStep, steps, setSteps } = useRequestModal();
   const [openModal, setOpenModal] = useState(false);
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Procurando Modal adequado...");
-  const stepFactory = (id: number, label: string, isCompleted: boolean) => ({ id, label, isCompleted });
-
-  const [activeStep, setActiveStep] = useState(0);
-  const [steps, setSteps] = useState([
-    stepFactory(0, "Solicitar Modal", false),
-    stepFactory(1, "Foto frontal", false),
-    stepFactory(2, "Foto da lateral esquerda", false),
-    stepFactory(3, "Foto da lateral direita", false),
-    stepFactory(4, "Foto da traseira", false),
-    stepFactory(5, "Solicitar Modal", false),
-  ]);
 
   const handleNext = () => {
     if (activeStep === 5) {

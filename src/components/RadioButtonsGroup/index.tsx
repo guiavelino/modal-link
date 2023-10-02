@@ -10,10 +10,16 @@ import styles from "./styles.module.scss";
 type RadioButtonsGroupProps = {
   formLabel: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  value: any;
   FormControlLabelChildren: FormControlLabelProps[];
 };
 
-export default function RadioButtonsGroup({ formLabel, onChange, FormControlLabelChildren }: RadioButtonsGroupProps) {
+export default function RadioButtonsGroup({
+  formLabel,
+  onChange,
+  FormControlLabelChildren,
+  value,
+}: RadioButtonsGroupProps) {
   return (
     <FormControl>
       <FormLabel className={styles.formLabel} id="demo-row-radio-buttons-group-label">
@@ -24,6 +30,7 @@ export default function RadioButtonsGroup({ formLabel, onChange, FormControlLabe
         aria-labelledby="demo-row-radio-buttons-group-label"
         name="row-radio-buttons-group"
         onChange={onChange}
+        value={value}
       >
         {FormControlLabelChildren.map((item, index) => (
           <FormControlLabel
