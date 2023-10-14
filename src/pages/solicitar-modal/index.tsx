@@ -207,35 +207,14 @@ const FifthStep = () => {
 };
 
 const LastStep = () => {
-  const [localization, setLocalization] = useState("");
-
-  const position = async () => {
-    await navigator.geolocation.getCurrentPosition(async (position) => {
-      const { longitude, latitude } = position?.coords;
-      const baseUrl = "https://api.tiles.mapbox.com";
-      const data = await fetch(
-        `${baseUrl}/v4/geocode/mapbox.places/${longitude},${latitude}.json?access_token=${
-          process.env.NEXT_PUBLIC_MAPBOX_GL_ACCESS_TOKEN ?? ""
-        }`
-      );
-      const json = await data.json();
-      setLocalization(json.features[0].place_name);
-    });
-  };
-
-  useEffect(() => {
-    const getData = async () => {
-      await position();
-    };
-
-    getData();
-  }, []);
+  const { selectedVehicle, localization, problems, problemDescription, typeOfLoad, weightInKg, isCarLoaded } =
+    useRequestModal();
 
   return (
     <div className={styles.lastStepContainer}>
       <article>
         <h3>Veículo</h3>
-        <p>Volvo FH16 - ABC-1234</p>
+        <p>{selectedVehicle?.transitBoard}</p>
       </article>
 
       <article>
@@ -246,22 +225,30 @@ const LastStep = () => {
       <article>
         <h3>Problema</h3>
         <div className={styles.pillContainer}>
-          <span>Falta de combustível</span>
-          <span>Outros</span>
+          {problems.map((problem) => (
+            <span>{problem}</span>
+          ))}
         </div>
-        <h3 style={{ marginTop: 8 }}>Descrição do Problema</h3>
-        <p>Além da falta de combustível, o meu caminhão está preso em um buraco.</p>
+        {problems.includes("Outros") && (
+          <>
+            <h3 style={{ marginTop: 8 }}>Descrição do Problema</h3>
+            <p>{problemDescription}</p>
+          </>
+        )}
       </article>
 
-      <article>
-        <h3>Carga do veículo</h3>
-        <div className={styles.pillContainer}>
-          <span>Carga frágil</span>
-          <span>Carga perecível</span>
-        </div>
-        <h3 style={{ marginTop: 8 }}>Peso estimado da carga</h3>
-        <p>900 KG</p>
-      </article>
+      {isCarLoaded && (
+        <article>
+          <h3>Carga do veículo</h3>
+          <div className={styles.pillContainer}>
+            {typeOfLoad.map((load) => (
+              <span>{load}</span>
+            ))}
+          </div>
+          <h3 style={{ marginTop: 8 }}>Peso estimado da carga (Kg)</h3>
+          <p>{weightInKg}</p>
+        </article>
+      )}
 
       <Grid
         container

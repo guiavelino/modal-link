@@ -4,18 +4,11 @@ import { FormControl, FormControlOwnProps, IconButton, InputAdornment, InputLabe
 import styles from "./styles.module.scss";
 
 type InputProps = {
-  type: string;
-  placeholder: string;
-  name: string;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onClick?: () => void;
-  id?: string;
   icon?: React.ReactNode;
   edge?: "start" | "end" | false;
   position?: "start" | "end";
-  value?: string;
   variant?: FormControlOwnProps["variant"];
-};
+} & React.InputHTMLAttributes<HTMLInputElement>;
 
 export default function Input({
   type,
