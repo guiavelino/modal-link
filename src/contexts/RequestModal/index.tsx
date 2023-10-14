@@ -26,6 +26,35 @@ export function RequestModalProvider({ children }: RequestModalProviderProps) {
   const [weightInKg, setWeightInKg] = useState<number | undefined>();
   const [typeOfLoad, setTypeOfLoad] = useState<string[]>([]);
 
+  useEffect(() => {
+    if (!problems.includes("Outros")) {
+      setProblemDescription("");
+    }
+    if (selectedVehicle && localization.length > 0 && problems.length > 0) {
+      if (problems.includes("Outros") && problemDescription.length === 0) {
+        setSteps((prev) => prev.map((step) => (step.id === 0 ? { ...step, isCompleted: false } : step)));
+
+        return;
+      } else {
+        setSteps((prev) => prev.map((step) => (step.id === 0 ? { ...step, isCompleted: true } : step)));
+      }
+
+      if (isCarLoaded || !isCarLoaded) {
+        if (isCarLoaded && weightInKg && typeOfLoad.length > 0) {
+          setSteps((prev) => prev.map((step) => (step.id === 0 ? { ...step, isCompleted: true } : step)));
+        } else if (!isCarLoaded) {
+          setSteps((prev) => prev.map((step) => (step.id === 0 ? { ...step, isCompleted: true } : step)));
+          setWeightInKg(undefined);
+          setTypeOfLoad([]);
+        } else {
+          setSteps((prev) => prev.map((step) => (step.id === 0 ? { ...step, isCompleted: false } : step)));
+        }
+      }
+    } else {
+      setSteps((prev) => prev.map((step) => (step.id === 0 ? { ...step, isCompleted: false } : step)));
+    }
+  }, [selectedVehicle, localization, problems, problemDescription, isCarLoaded, weightInKg, typeOfLoad]);
+
   // STEP 2
   const [frontPhoto, setFrontPhoto] = useState("");
   const [leftPhoto, setLeftPhoto] = useState("");

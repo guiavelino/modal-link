@@ -30,6 +30,11 @@
     margin-top: 32px;
     background-color: #00a1fc;
     color: #fff;
+
+    &:disabled {
+      background-color: #b3b1b1;
+      color: #fff;
+    }
   }
 
   .firstStepFormulary {
@@ -62,7 +67,7 @@
       gap: 8px;
 
       span {
-        background-color: #D9D9D9;
+        background-color: #d9d9d9;
         color: #989898;
         border-radius: 24px;
         padding: 4px 12px;

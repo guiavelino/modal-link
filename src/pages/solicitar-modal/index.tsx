@@ -105,14 +105,16 @@ const FirstStep = () => {
         setCheckedOptions={setProblems}
       />
 
-      <TextArea
-        placeholder="Descreva o problema do veículo..."
-        value={problemDescription}
-        onChange={(event) => {
-          const { value } = event.target;
-          setProblemDescription(value);
-        }}
-      />
+      {problems.includes("Outros") && (
+        <TextArea
+          placeholder="Descreva o problema do veículo..."
+          value={problemDescription}
+          onChange={(event) => {
+            const { value } = event.target;
+            setProblemDescription(value);
+          }}
+        />
+      )}
 
       <RadioButtonsGroup
         FormControlLabelChildren={[
@@ -372,7 +374,12 @@ export default function RequestModal() {
         {activeStep === 5 && <LastStep />}
       </section>
 
-      <Button onClick={handleNext} variant="contained" className={styles.nextButton}>
+      <Button
+        disabled={!steps[activeStep].isCompleted}
+        onClick={handleNext}
+        variant="contained"
+        className={styles.nextButton}
+      >
         {activeStep === 5 ? "Confirmar" : "Continuar"}
       </Button>
 
