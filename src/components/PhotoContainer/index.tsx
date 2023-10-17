@@ -4,6 +4,7 @@ import Alert from "@mui/material/Alert";
 import { BiSolidCamera } from "react-icons/bi";
 
 import styles from "./styles.module.scss";
+import { UploadImage } from "../UploadImage";
 
 type PhotoContainerProps = {
   title: string;
@@ -13,14 +14,13 @@ type PhotoContainerProps = {
 };
 
 export default function PhotoContainer({ title, exampleImage, photo, setPhoto }: PhotoContainerProps) {
-  const [openCam, setOpenCam] = useState(false);
-
   return (
     <main className={styles.photoContainer}>
       <div className={styles.photoCard}>
         <h1>{title}</h1>
         <div className={styles.picture}>
-          <button onClick={() => setOpenCam(!openCam)}>Tirar Foto <BiSolidCamera size={24} /></button>
+          <UploadImage />
+          {/* <button>Tirar Foto <BiSolidCamera size={24} /></button> */}
         </div>
       </div>
 
