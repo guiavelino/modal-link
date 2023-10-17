@@ -56,10 +56,10 @@ export function RequestModalProvider({ children }: RequestModalProviderProps) {
   }, [selectedVehicle, localization, problems, problemDescription, isCarLoaded, weightInKg, typeOfLoad]);
 
   // STEP 2
-  const [frontPhoto, setFrontPhoto] = useState("");
-  const [leftPhoto, setLeftPhoto] = useState("");
-  const [rightPhoto, setRightPhoto] = useState("");
-  const [backPhoto, setBackPhoto] = useState("");
+  const [frontPhoto, setFrontPhoto] = useState([]);
+  const [leftPhoto, setLeftPhoto] = useState([]);
+  const [rightPhoto, setRightPhoto] = useState([]);
+  const [backPhoto, setBackPhoto] = useState([]);
 
   useEffect(() => {
     console.log({ frontPhoto, leftPhoto, rightPhoto, backPhoto });

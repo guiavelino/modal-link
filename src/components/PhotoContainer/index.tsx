@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import Image, { StaticImageData } from "next/image";
 import Alert from "@mui/material/Alert";
-import { BiSolidCamera } from "react-icons/bi";
 
 import styles from "./styles.module.scss";
 import { UploadImage } from "../UploadImage";
@@ -9,8 +8,8 @@ import { UploadImage } from "../UploadImage";
 type PhotoContainerProps = {
   title: string;
   exampleImage: StaticImageData;
-  setPhoto: (photo: string) => void;
-  photo: string;
+  photo: never[];
+  setPhoto: Dispatch<SetStateAction<never[]>>;
 };
 
 export default function PhotoContainer({ title, exampleImage, photo, setPhoto }: PhotoContainerProps) {
@@ -19,8 +18,7 @@ export default function PhotoContainer({ title, exampleImage, photo, setPhoto }:
       <div className={styles.photoCard}>
         <h1>{title}</h1>
         <div className={styles.picture}>
-          <UploadImage />
-          {/* <button>Tirar Foto <BiSolidCamera size={24} /></button> */}
+          <UploadImage image={photo} setImage={setPhoto} />
         </div>
       </div>
 

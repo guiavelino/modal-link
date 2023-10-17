@@ -18,14 +18,14 @@ export interface IRequestModalContext {
   setSteps: Dispatch<SetStateAction<TStep[]>>;
   stepFactory: TStepFactory;
 
-  frontPhoto: string;
-  leftPhoto: string;
-  rightPhoto: string;
-  backPhoto: string;
-  setFrontPhoto: Dispatch<SetStateAction<string>>;
-  setLeftPhoto: Dispatch<SetStateAction<string>>;
-  setRightPhoto: Dispatch<SetStateAction<string>>;
-  setBackPhoto: Dispatch<SetStateAction<string>>;
+  frontPhoto: never[];
+  leftPhoto: never[];
+  rightPhoto: never[];
+  backPhoto: never[];
+  setFrontPhoto: Dispatch<SetStateAction<never[]>>;
+  setLeftPhoto: Dispatch<SetStateAction<never[]>>;
+  setRightPhoto: Dispatch<SetStateAction<never[]>>;
+  setBackPhoto: Dispatch<SetStateAction<never[]>>;
 
   localization: string;
   problems: string[];

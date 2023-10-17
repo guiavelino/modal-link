@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import ImageUploading, { ImageListType } from 'react-images-uploading';
 import Resizer from 'react-image-file-resizer';
-import { AiOutlineFileImage } from 'react-icons/ai';
 import Image from 'next/image';
 
-
 import styles from './styles.module.scss';
+import { BiSolidCamera } from 'react-icons/bi';
 
 const resizeFile = (file: any, base64: any) =>
   new Promise(resolve => {
@@ -25,11 +24,13 @@ const resizeFile = (file: any, base64: any) =>
     );
   });
 
-export function UploadImage() {
-  const [images, setImages] = useState([]);
-  const [loadingUpload, setLoadingUpload] = useState(false);
+type UploadImageProps = {
+    image: never[];
+    setImage: Dispatch<SetStateAction<never[]>>;
+}
 
-  const maxNumber = 4;
+export function UploadImage({ image, setImage }: UploadImageProps) {
+  const [loadingUpload, setLoadingUpload] = useState(false);
 
   const onChange = async (imageList: ImageListType) => {
     const resizedImages = await Promise.all(imageList.map(image => resizeFile(image.file, true)));
@@ -41,71 +42,58 @@ export function UploadImage() {
       dataURL: resizedImages[index]
     }));
 
-    setImages(resizedImageList as never[]);
+    setImage(resizedImageList as never[]);
   };
 
   return (
     <div className={styles.uploadImageContainer}>
-      <ImageUploading
-        multiple
-        value={images}
-        onChange={onChange}
-        maxNumber={maxNumber}
-        acceptType={['jpg', 'jpeg', 'png']}
-      >
-        {({
-          imageList,
-          onImageUpload,
-          onImageUpdate,
-          isDragging,
-          dragProps,
-          errors
-        }) => (
-          <div className={styles.uploadImageContent}>
-            <div className={styles.uploadImageButtons}>
-              {!loadingUpload && (
-                  <button
-                    style={isDragging ? { color: 'red' } : undefined}
-                    onClick={onImageUpload}
-                    type="button"
-                    className={styles.uploadImageButton}
-                    {...dragProps}
-                  >
-                    <AiOutlineFileImage size={24} /> Selecione as fotos
-                  </button>
-              )}
+        <ImageUploading
+            multiple
+            value={image}
+            onChange={onChange}
+            maxNumber={1}
+            acceptType={['jpg', 'jpeg', 'png']}
+        >
+            {({
+                imageList,
+                onImageUpload,
+                onImageUpdate,
+                errors
+            }) => (
+                <div className={styles.uploadImageContent}>
+                    {!loadingUpload && imageList.length <= 0 && (
+                        <button type="button" onClick={onImageUpload} className={styles.uploadImageButton}>
+                            Tirar Foto <BiSolidCamera size={24} />
+                        </button>
+                    )}
 
-              {!loadingUpload && errors && (
-                <div className={styles.uploadImageError}>
-                  {errors.maxNumber && <span>Quantidade máxima excedida</span>}
-                  {errors.acceptType && <span>O tipo de arquivo selecionado não é permitido JPEG, JPG, PNG</span>}
-                  {errors.maxFileSize && <span>Este arquivo é muito grande, selecione um menor</span>}
-                  {errors.resolution && <span>O arquivo selecionado não corresponde à resolução desejada</span>}
+                    {!loadingUpload && imageList.length > 0 && (
+                        <>
+                            {imageList.map((image, index) => (
+                                <Image
+                                    key={`${index} + ${image?.file?.name}`}
+                                    src={image.dataURL as string}
+                                    height={100}
+                                    width={100}
+                                    alt=""
+                                    className={styles.uploadImagePreview}
+                                    onClick={() => onImageUpdate(index)}
+                                />
+                            ))}
+                        </>
+                    )}
+                    
+                    {!loadingUpload && errors && (
+                        <div className={styles.uploadImageError}>
+                            {errors.maxNumber && <span>Selecione apenas 1 arquivo.</span>}
+                            {errors.acceptType && <span>O tipo de arquivo selecionado não é permitido, apenas tipos JPEG, JPG e PNG são aceitos.</span>}
+                            {errors.maxFileSize && <span>Este arquivo é muito grande, selecione um menor.</span>}
+                            {errors.resolution && <span>O arquivo selecionado não corresponde à resolução desejada.</span>}
+                        </div>
+                    )}
                 </div>
-              )}
-            </div>
-
-            {!loadingUpload && imageList.length > 0 && (
-              <div className={styles.uploadImageList}>
-                {imageList.map((image, index) => (
-                  <div key={`${index} + ${image?.file?.name}`} className={styles.uploadImageListItem}>
-                    <Image
-                      src={image.dataURL as string}
-                      alt=""
-                      width={100}
-                      height={100}
-                      className={styles.uploadImageListItemImage}
-                      onClick={() => onImageUpdate(index)}
-                    />
-                  </div>
-                ))}
-              </div>
             )}
-
-            {loadingUpload && <p>Enviando imagens... Aguarde!</p>}
-          </div>
-        )}
-      </ImageUploading>
+        </ImageUploading>
     </div>
   );
 }
