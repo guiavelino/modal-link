@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 
 import { RequestModalProviderProps, IRequestModalContext, TVehicle } from "./types";
+import { ImageListType } from "react-images-uploading";
 
 export const RequestModalContext = createContext({} as IRequestModalContext);
 
@@ -25,6 +26,12 @@ export function RequestModalProvider({ children }: RequestModalProviderProps) {
   const [isCarLoaded, setIsCarLoaded] = useState<boolean | undefined>();
   const [weightInKg, setWeightInKg] = useState<number | undefined>();
   const [typeOfLoad, setTypeOfLoad] = useState<string[]>([]);
+  
+  // STEP 2
+  const [frontPhoto, setFrontPhoto] = useState<ImageListType[]>([]);
+  const [leftPhoto, setLeftPhoto] = useState<ImageListType[]>([]);
+  const [rightPhoto, setRightPhoto] = useState<ImageListType[]>([]);
+  const [backPhoto, setBackPhoto] = useState<ImageListType[]>([]);
 
   useEffect(() => {
     if (!problems.includes("Outros")) {
@@ -55,14 +62,22 @@ export function RequestModalProvider({ children }: RequestModalProviderProps) {
     }
   }, [selectedVehicle, localization, problems, problemDescription, isCarLoaded, weightInKg, typeOfLoad]);
 
-  // STEP 2
-  const [frontPhoto, setFrontPhoto] = useState([]);
-  const [leftPhoto, setLeftPhoto] = useState([]);
-  const [rightPhoto, setRightPhoto] = useState([]);
-  const [backPhoto, setBackPhoto] = useState([]);
-
   useEffect(() => {
-    console.log({ frontPhoto, leftPhoto, rightPhoto, backPhoto });
+    if (frontPhoto.length > 0) {
+      setSteps((prev) => prev.map((step) => (step.id === 1 ? { ...step, isCompleted: true } : step)));
+    }
+    
+    if (leftPhoto.length > 0) {
+      setSteps((prev) => prev.map((step) => (step.id === 2 ? { ...step, isCompleted: true } : step)));
+    }
+    
+    if (rightPhoto.length > 0) {
+      setSteps((prev) => prev.map((step) => (step.id === 3 ? { ...step, isCompleted: true } : step)));
+    }
+    
+    if (backPhoto.length > 0) {
+      setSteps((prev) => prev.map((step) => (step.id === 4 ? { ...step, isCompleted: true } : step)));
+    }
   }, [frontPhoto, leftPhoto, rightPhoto, backPhoto]);
 
   useEffect(() => {

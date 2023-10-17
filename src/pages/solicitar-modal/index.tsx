@@ -26,6 +26,7 @@ import { useRequestModal } from "@/hooks/useRequestModal";
 import CustomizedDialogs from "@/components/Modal";
 import Image from "next/image";
 import { Vehicle } from "@prisma/client";
+import { ImageType } from "react-images-uploading";
 
 const FirstStep = () => {
   const [vehicles] = useState<Pick<Vehicle, "id" | "transitBoard">[]>([
@@ -207,8 +208,19 @@ const FifthStep = () => {
 };
 
 const LastStep = () => {
-  const { selectedVehicle, localization, problems, problemDescription, typeOfLoad, weightInKg, isCarLoaded } =
-    useRequestModal();
+  const { 
+    selectedVehicle, 
+    localization, 
+    problems, 
+    problemDescription, 
+    typeOfLoad, 
+    weightInKg, 
+    isCarLoaded, 
+    frontPhoto,
+    leftPhoto,
+    rightPhoto,
+    backPhoto
+  } = useRequestModal();
 
   return (
     <div className={styles.lastStepContainer}>
@@ -257,16 +269,16 @@ const LastStep = () => {
         style={{ margin: 0, height: "100%", width: "100%" }}
       >
         <Grid item xs={6} style={{ margin: 0, padding: "0 4px 4px 0", width: "50%" }}>
-          <Image src={frontTruck} width={180} height={120} alt="" style={{ width: "100%" }} />
+          <Image src={(frontPhoto[0] as ImageType).dataURL ?? ''} width={180} height={120} alt="" style={{ width: "100%" }} />
         </Grid>
         <Grid item xs={6} style={{ margin: 0, padding: "0 0 4px 4px", width: "50%" }}>
-          <Image src={leftTruck} width={180} height={120} alt="" style={{ width: "100%" }} />
+          <Image src={(leftPhoto[0] as ImageType).dataURL ?? ''} width={180} height={120} alt="" style={{ width: "100%" }} />
         </Grid>
         <Grid item xs={6} style={{ margin: 0, padding: "0 4px 0 0", width: "50%" }}>
-          <Image src={rightTruck} width={180} height={120} alt="" style={{ width: "100%" }} />
+          <Image src={(rightPhoto[0] as ImageType).dataURL ?? ''} width={180} height={120} alt="" style={{ width: "100%" }} />
         </Grid>
         <Grid item xs={6} style={{ margin: 0, padding: "0 0 0 4px", width: "50%" }}>
-          <Image src={backTruck} width={180} height={120} alt="" style={{ width: "100%" }} />
+          <Image src={(backPhoto[0] as ImageType).dataURL ?? ''} width={180} height={120} alt="" style={{ width: "100%" }} />
         </Grid>
       </Grid>
     </div>

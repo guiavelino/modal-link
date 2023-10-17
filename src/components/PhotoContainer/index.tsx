@@ -4,12 +4,13 @@ import Alert from "@mui/material/Alert";
 
 import styles from "./styles.module.scss";
 import { UploadImage } from "../UploadImage";
+import { ImageListType } from "react-images-uploading";
 
 type PhotoContainerProps = {
   title: string;
   exampleImage: StaticImageData;
-  photo: never[];
-  setPhoto: Dispatch<SetStateAction<never[]>>;
+  photo: ImageListType[];
+  setPhoto: Dispatch<SetStateAction<ImageListType[]>>;
 };
 
 export default function PhotoContainer({ title, exampleImage, photo, setPhoto }: PhotoContainerProps) {

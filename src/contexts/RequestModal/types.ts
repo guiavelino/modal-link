@@ -1,5 +1,6 @@
 import { Vehicle } from "@prisma/client";
 import { Dispatch, SetStateAction } from "react";
+import { ImageListType } from "react-images-uploading";
 
 export type TVehicle = Pick<Vehicle, "id" | "transitBoard">;
 
@@ -18,14 +19,14 @@ export interface IRequestModalContext {
   setSteps: Dispatch<SetStateAction<TStep[]>>;
   stepFactory: TStepFactory;
 
-  frontPhoto: never[];
-  leftPhoto: never[];
-  rightPhoto: never[];
-  backPhoto: never[];
-  setFrontPhoto: Dispatch<SetStateAction<never[]>>;
-  setLeftPhoto: Dispatch<SetStateAction<never[]>>;
-  setRightPhoto: Dispatch<SetStateAction<never[]>>;
-  setBackPhoto: Dispatch<SetStateAction<never[]>>;
+  frontPhoto: ImageListType[];
+  leftPhoto: ImageListType[];
+  rightPhoto: ImageListType[];
+  backPhoto: ImageListType[];
+  setFrontPhoto: Dispatch<SetStateAction<ImageListType[]>>;
+  setLeftPhoto: Dispatch<SetStateAction<ImageListType[]>>;
+  setRightPhoto: Dispatch<SetStateAction<ImageListType[]>>;
+  setBackPhoto: Dispatch<SetStateAction<ImageListType[]>>;
 
   localization: string;
   problems: string[];

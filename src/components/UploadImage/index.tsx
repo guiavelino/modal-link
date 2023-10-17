@@ -2,11 +2,11 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import ImageUploading, { ImageListType } from 'react-images-uploading';
 import Resizer from 'react-image-file-resizer';
 import Image from 'next/image';
-
-import styles from './styles.module.scss';
 import { BiSolidCamera } from 'react-icons/bi';
 
-const resizeFile = (file: any, base64: any) =>
+import styles from './styles.module.scss';
+
+const resizeFile = (file: File | undefined, base64: boolean) =>
   new Promise(resolve => {
     if (!file) return;
 
@@ -25,8 +25,8 @@ const resizeFile = (file: any, base64: any) =>
   });
 
 type UploadImageProps = {
-    image: never[];
-    setImage: Dispatch<SetStateAction<never[]>>;
+    image: ImageListType[];
+    setImage: Dispatch<SetStateAction<ImageListType[]>>;
 }
 
 export function UploadImage({ image, setImage }: UploadImageProps) {
@@ -36,13 +36,13 @@ export function UploadImage({ image, setImage }: UploadImageProps) {
     const resizedImages = await Promise.all(imageList.map(image => resizeFile(image.file, true)));
     const resizedFile = await Promise.all(imageList.map(image => resizeFile(image.file, false)));
 
-    const resizedImageList = imageList.map((image, index) => ({
-      ...image,
-      file: resizedFile[index],
-      dataURL: resizedImages[index]
-    }));
+    const resizedImageList = imageList.map((image, i) => {
+        image.file = resizedFile[i] as File;
+        image.dataURL = resizedImages[i] as string;
+        return image;
+    });
 
-    setImage(resizedImageList as never[]);
+    setImage(resizedImageList as ImageListType[]);
   };
 
   return (
