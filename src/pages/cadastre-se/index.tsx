@@ -1,11 +1,54 @@
 import { Button } from "@mui/material";
 import Link from "next/link";
+import { FormEvent, useState } from "react";
 
 import Input from "@/components/Input";
 import styles from './styles.module.scss';
+import { cpfMask } from "@/helpers/mask";
+import { validateCPF, validateEmail } from "@/helpers/validations";
 
 export default function SignUp() {
-  const submit = () => {}
+  const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const validateFields = (): boolean => name.length > 0 && lastName.length > 0 && cpf.length > 0 && email.length > 0 && password.length > 0 && confirmPassword.length > 0;
+  
+  const validatePassword = (): boolean => password === confirmPassword;
+  
+  const validate = (): boolean => {
+    if (!validateFields()) {
+      setError("Preencha todos os campos.");
+    } else if (!validateCPF(cpf)) {
+      setError("CPF inválido.");
+    } else if (!validateEmail(email)) {
+      setError("E-mail inválido.");
+    } else if (!validatePassword()) {
+      setError("As senhas devem ser iguais.");
+    } else {
+      setError(null);
+      return true;
+    }
+
+    return false;
+  }
+
+  const submit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    if (!validate()) return;
+
+    console.log(name)
+    console.log(lastName)
+    console.log(cpf)
+    console.log(email)
+    console.log(password)
+    console.log(confirmPassword)
+  }
   
   return (
     <main className={styles.signUpContainer}>
@@ -16,24 +59,37 @@ export default function SignUp() {
           type="text"
           placeholder="Nome"
           name="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
         />
 
         <Input
           type="text"
           placeholder="Sobrenome"
           name="lastName"
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          required
         />
         
         <Input
           type="text"
           placeholder="CPF"
           name="cpf"
+          value={cpf}
+          onChange={(e) => setCpf(cpfMask(e.target.value))}
+          required
+          maxLength={14}
         />
         
         <Input
           type="email"
           placeholder="E-mail"
           name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
         />
 
         <div className={styles.passwordContainer}>
@@ -41,21 +97,37 @@ export default function SignUp() {
                 type="password"
                 placeholder="Senha"
                 name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
             />
 
             <Input
                 type="password"
                 placeholder="Confirmar Senha"
                 name="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
             />
         </div>
 
-        <Button variant="contained" className={styles.submitButton}>Cadastre-se</Button>
+        <Button 
+          type="submit"
+          variant="contained" 
+          className={styles.submitButton}
+        >
+          Cadastre-se
+        </Button>
       </form>
 
-      <p>
-        Já possui uma conta? <Link href="/">Entrar</Link>
-      </p>
+      {error && <p className={styles.errorMessage}>{error}</p>}
+
+      <footer>
+        <p>
+          Já possui uma conta? <Link href="/">Entrar</Link>
+        </p>
+      </footer>
     </main>
   )
 }
