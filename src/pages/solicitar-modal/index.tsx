@@ -269,16 +269,56 @@ const LastStep = () => {
         style={{ margin: 0, height: "100%", width: "100%" }}
       >
         <Grid item xs={6} style={{ margin: 0, padding: "0 4px 4px 0", width: "50%" }}>
-          <Image src={(frontPhoto[0] as ImageType).dataURL ?? ''} width={180} height={120} alt="" style={{ width: "100%" }} />
+          <Image 
+            src={(frontPhoto[0] as ImageType).dataURL ?? ''}
+            width={180} 
+            height={120}
+            alt=""
+            style={{ 
+              width: "100%", 
+              objectFit: 'cover',
+              borderRadius: '4px'
+            }} 
+          />
         </Grid>
         <Grid item xs={6} style={{ margin: 0, padding: "0 0 4px 4px", width: "50%" }}>
-          <Image src={(leftPhoto[0] as ImageType).dataURL ?? ''} width={180} height={120} alt="" style={{ width: "100%" }} />
+          <Image 
+            src={(leftPhoto[0] as ImageType).dataURL ?? ''}
+            width={180} 
+            height={120}
+            alt=""
+            style={{ 
+              width: "100%", 
+              objectFit: 'cover',
+              borderRadius: '4px'
+            }} 
+          />
         </Grid>
         <Grid item xs={6} style={{ margin: 0, padding: "0 4px 0 0", width: "50%" }}>
-          <Image src={(rightPhoto[0] as ImageType).dataURL ?? ''} width={180} height={120} alt="" style={{ width: "100%" }} />
+          <Image 
+            src={(rightPhoto[0] as ImageType).dataURL ?? ''}
+            width={180} 
+            height={120}
+            alt=""
+            style={{ 
+              width: "100%", 
+              objectFit: 'cover',
+              borderRadius: '4px'
+            }} 
+          />
         </Grid>
         <Grid item xs={6} style={{ margin: 0, padding: "0 0 0 4px", width: "50%" }}>
-          <Image src={(backPhoto[0] as ImageType).dataURL ?? ''} width={180} height={120} alt="" style={{ width: "100%" }} />
+          <Image 
+            src={(backPhoto[0] as ImageType).dataURL ?? ''}
+            width={180} 
+            height={120}
+            alt=""
+            style={{ 
+              width: "100%", 
+              objectFit: 'cover',
+              borderRadius: '4px'
+            }} 
+          />
         </Grid>
       </Grid>
     </div>

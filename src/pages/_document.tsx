@@ -4,7 +4,7 @@ export default function Document() {
   return (
     <Html lang="pt-BR">
       <Head>
-        <title>Modal Link | Porto Seguro</title>
+        <title>Modal Link</title>
       </Head>
       <body>
         <Main />
