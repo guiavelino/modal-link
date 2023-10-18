@@ -2,6 +2,8 @@ import { createContext, useEffect, useState } from "react";
 
 import { RequestModalProviderProps, IRequestModalContext, TVehicle } from "./types";
 import { ImageListType } from "react-images-uploading";
+import { step1Validation } from "./stepsFormValidations/step1Validation";
+import { stepPhotosValidation } from "./stepsFormValidations/stepPhotosValidation";
 
 export const RequestModalContext = createContext({} as IRequestModalContext);
 
@@ -26,59 +28,56 @@ export function RequestModalProvider({ children }: RequestModalProviderProps) {
   const [isCarLoaded, setIsCarLoaded] = useState<boolean | undefined>();
   const [weightInKg, setWeightInKg] = useState<number | undefined>();
   const [typeOfLoad, setTypeOfLoad] = useState<string[]>([]);
-  
-  // STEP 2
+
   const [frontPhoto, setFrontPhoto] = useState<ImageListType[]>([]);
   const [leftPhoto, setLeftPhoto] = useState<ImageListType[]>([]);
   const [rightPhoto, setRightPhoto] = useState<ImageListType[]>([]);
   const [backPhoto, setBackPhoto] = useState<ImageListType[]>([]);
 
   useEffect(() => {
-    if (!problems.includes("Outros")) {
-      setProblemDescription("");
+    if (activeStep === 0) {
+      step1Validation({
+        problemDescription,
+        localization,
+        problems,
+        setProblemDescription,
+        setSteps,
+        setTypeOfLoad,
+        setWeightInKg,
+        typeOfLoad,
+        isCarLoaded,
+        selectedVehicle,
+        weightInKg,
+      });
+    } else if (activeStep > 0 && activeStep < 5) {
+      stepPhotosValidation({
+        frontPhoto,
+        leftPhoto,
+        rightPhoto,
+        backPhoto,
+        setSteps,
+      });
+    } else if (activeStep === 5) {
+      setSteps((prev) => {
+        const newSteps = [...prev];
+        newSteps[activeStep].isCompleted = true;
+        return newSteps;
+      });
     }
-    if (selectedVehicle && localization.length > 0 && problems.length > 0) {
-      if (problems.includes("Outros") && problemDescription.length === 0) {
-        setSteps((prev) => prev.map((step) => (step.id === 0 ? { ...step, isCompleted: false } : step)));
-
-        return;
-      } else {
-        setSteps((prev) => prev.map((step) => (step.id === 0 ? { ...step, isCompleted: true } : step)));
-      }
-
-      if (isCarLoaded || !isCarLoaded) {
-        if (isCarLoaded && weightInKg && typeOfLoad.length > 0) {
-          setSteps((prev) => prev.map((step) => (step.id === 0 ? { ...step, isCompleted: true } : step)));
-        } else if (!isCarLoaded) {
-          setSteps((prev) => prev.map((step) => (step.id === 0 ? { ...step, isCompleted: true } : step)));
-          setWeightInKg(undefined);
-          setTypeOfLoad([]);
-        } else {
-          setSteps((prev) => prev.map((step) => (step.id === 0 ? { ...step, isCompleted: false } : step)));
-        }
-      }
-    } else {
-      setSteps((prev) => prev.map((step) => (step.id === 0 ? { ...step, isCompleted: false } : step)));
-    }
-  }, [selectedVehicle, localization, problems, problemDescription, isCarLoaded, weightInKg, typeOfLoad]);
-
-  useEffect(() => {
-    if (frontPhoto.length > 0) {
-      setSteps((prev) => prev.map((step) => (step.id === 1 ? { ...step, isCompleted: true } : step)));
-    }
-    
-    if (leftPhoto.length > 0) {
-      setSteps((prev) => prev.map((step) => (step.id === 2 ? { ...step, isCompleted: true } : step)));
-    }
-    
-    if (rightPhoto.length > 0) {
-      setSteps((prev) => prev.map((step) => (step.id === 3 ? { ...step, isCompleted: true } : step)));
-    }
-    
-    if (backPhoto.length > 0) {
-      setSteps((prev) => prev.map((step) => (step.id === 4 ? { ...step, isCompleted: true } : step)));
-    }
-  }, [frontPhoto, leftPhoto, rightPhoto, backPhoto]);
+  }, [
+    selectedVehicle,
+    localization,
+    problems,
+    problemDescription,
+    isCarLoaded,
+    weightInKg,
+    typeOfLoad,
+    frontPhoto,
+    leftPhoto,
+    rightPhoto,
+    backPhoto,
+    steps,
+  ]);
 
   useEffect(() => {
     if (!isCarLoaded) {
