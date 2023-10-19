@@ -353,30 +353,12 @@ export default function RequestModal() {
 
     if (activeStep === steps.length - 1) return;
 
-    const newSteps = steps.map((step) => {
-      if (step.id === activeStep) {
-        step.isCompleted = true;
-      }
-
-      return step;
-    });
-
-    setSteps(newSteps);
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
   const handleBack = () => {
     const lastStep = activeStep - 1;
 
-    const newSteps = steps.map((step) => {
-      if (step.id === lastStep) {
-        step.isCompleted = false;
-      }
-
-      return step;
-    });
-
-    setSteps(newSteps);
     setActiveStep(lastStep);
   };
 
@@ -397,7 +379,7 @@ export default function RequestModal() {
         </header>
         <Stepper nonLinear activeStep={activeStep} className={styles.stepper}>
           {steps.map(({ id, isCompleted }) => (
-            <Step key={id} completed={isCompleted}>
+            <Step key={id} completed={activeStep === id ? false : activeStep !== id && isCompleted}>
               <StepButton color="inherit" disabled />
             </Step>
           ))}

@@ -58,11 +58,7 @@ export function RequestModalProvider({ children }: RequestModalProviderProps) {
         setSteps,
       });
     } else if (activeStep === 5) {
-      setSteps((prev) => {
-        const newSteps = [...prev];
-        newSteps[activeStep].isCompleted = true;
-        return newSteps;
-      });
+      setSteps((prev) => prev.map((step) => ({ ...step, isCompleted: true })));
     }
   }, [
     selectedVehicle,
