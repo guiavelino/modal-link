@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 import { PiMapPinFill } from "react-icons/pi";
 import { GiWeight } from "react-icons/gi";
-import { Grid, IconButton, Radio } from "@mui/material";
+import { Grid, IconButton, Popover, Radio, Snackbar, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -53,27 +53,36 @@ const FirstStep = () => {
   const [lon, setLon] = useState<number>();
   const [lat, setLat] = useState<number>();
 
-  const position = async () => {
-    await navigator.geolocation.getCurrentPosition((position) => {
-      setLon(position?.coords?.longitude);
-      setLat(position?.coords?.latitude);
-    });
-  };
+  const [alertPermissionLocationOpen, setAlertPermissionLocationOpen] = useState(false);
 
-  const getLocation = async () => {
-    const baseUrl = "https://api.tiles.mapbox.com";
-    const data = await fetch(
-      `${baseUrl}/v4/geocode/mapbox.places/${lon},${lat}.json?access_token=${
-        process.env.NEXT_PUBLIC_MAPBOX_GL_ACCESS_TOKEN ?? ""
-      }`
+  const vertical = "bottom";
+  const horizontal = "center";
+
+  const getLocation = async (event: React.MouseEvent<Element>) => {
+    await navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLon(position?.coords?.longitude);
+        setLat(position?.coords?.latitude);
+      },
+      (error) => {
+        if (error.code === error.PERMISSION_DENIED) {
+          setAlertPermissionLocationOpen(true);
+        }
+      },
+      { enableHighAccuracy: true }
     );
-    const json = await data.json();
-    setLocalization(json.features[0].place_name);
-  };
 
-  useEffect(() => {
-    position();
-  }, []);
+    if (lon && lat) {
+      const baseUrl = "https://api.tiles.mapbox.com";
+      const data = await fetch(
+        `${baseUrl}/v4/geocode/mapbox.places/${lon},${lat}.json?access_token=${
+          process.env.NEXT_PUBLIC_MAPBOX_GL_ACCESS_TOKEN ?? ""
+        }`
+      );
+      const json = await data.json();
+      setLocalization(json.features[0].place_name);
+    }
+  };
 
   return (
     <div className={styles.firstStepFormulary}>
@@ -94,9 +103,26 @@ const FirstStep = () => {
         type="text"
         placeholder="Localização"
         name="location"
-        icon={<PiMapPinFill />}
-        onClick={getLocation}
+        icon={
+          <PiMapPinFill
+            onClick={(event) => {
+              getLocation(event);
+            }}
+          />
+        }
+        onChange={(event) => {
+          const { value } = event.target;
+          setLocalization(value);
+        }}
         value={localization}
+      />
+
+      <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        open={alertPermissionLocationOpen}
+        onClose={() => setAlertPermissionLocationOpen(false)}
+        message="Ative a permissão de localização para localização automática."
+        key={vertical + horizontal}
       />
 
       <MultipleSelectChip
