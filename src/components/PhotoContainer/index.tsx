@@ -29,7 +29,7 @@ export default function PhotoContainer({ title, exampleImage, photo, setPhoto }:
 
       <div className={styles.photoCard}>
         <h1>Exemplo</h1>
-        <Image src={exampleImage} width={332} height={216} alt="" />
+        <Image src={exampleImage} width={332} height={216} alt="" style={{width: "100%", height: "100%"}} />
       </div>
     </main>
   );

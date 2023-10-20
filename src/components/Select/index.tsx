@@ -12,7 +12,7 @@ type SelectComponentProps = {
   placeholder: string;
   optionsProps: OptionsProps[];
   id?: string;
-  selected?: number;
+  selected?: number | string;
   setSelected: (value: number) => void;
 };
 
@@ -20,7 +20,7 @@ export default function SelectComponent({
   placeholder,
   optionsProps,
   id = "select",
-  selected,
+  selected = "",
   setSelected,
 }: SelectComponentProps) {
   const handleChange = (event: any) => {
@@ -40,8 +40,8 @@ export default function SelectComponent({
         onChange={handleChange}
         className={styles.selectContainer}
       >
-        {optionsProps.map((option) => (
-          <MenuItem value={option.id}>{option.description}</MenuItem>
+        {optionsProps.map((option, idx) => (
+          <MenuItem key={`menu-item-${idx}`} value={option.id}>{option.description}</MenuItem>
         ))}
       </Select>
     </FormControl>

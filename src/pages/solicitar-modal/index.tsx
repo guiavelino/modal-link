@@ -58,7 +58,7 @@ const FirstStep = () => {
   const vertical = "bottom";
   const horizontal = "center";
 
-  const getLocation = async (event: React.MouseEvent<Element>) => {
+  const getLocation = async () => {
     await navigator.geolocation.getCurrentPosition(
       (position) => {
         setLon(position?.coords?.longitude);
@@ -104,12 +104,9 @@ const FirstStep = () => {
         placeholder="Localização"
         name="location"
         icon={
-          <PiMapPinFill
-            onClick={(event) => {
-              getLocation(event);
-            }}
-          />
+          <PiMapPinFill />
         }
+        iconOnClick={getLocation}
         onChange={(event) => {
           const { value } = event.target;
           setLocalization(value);
@@ -263,8 +260,8 @@ const LastStep = () => {
       <article>
         <h3>Problema</h3>
         <div className={styles.pillContainer}>
-          {problems.map((problem) => (
-            <span>{problem}</span>
+          {problems.map((problem, idx) => (
+            <span key={`${problem}-${idx}`}>{problem}</span>
           ))}
         </div>
         {problems.includes("Outros") && (
@@ -279,8 +276,8 @@ const LastStep = () => {
         <article>
           <h3>Carga do veículo</h3>
           <div className={styles.pillContainer}>
-            {typeOfLoad.map((load) => (
-              <span>{load}</span>
+            {typeOfLoad.map((load, idx) => (
+              <span key={`${load}-${idx}`}>{load}</span>
             ))}
           </div>
           <h3 style={{ marginTop: 8 }}>Peso estimado da carga (Kg)</h3>
@@ -302,6 +299,7 @@ const LastStep = () => {
             alt=""
             style={{
               width: "100%",
+              height: "100%",
               objectFit: "cover",
               borderRadius: "4px",
             }}
@@ -315,6 +313,7 @@ const LastStep = () => {
             alt=""
             style={{
               width: "100%",
+              height: "100%",
               objectFit: "cover",
               borderRadius: "4px",
             }}
@@ -328,6 +327,7 @@ const LastStep = () => {
             alt=""
             style={{
               width: "100%",
+              height: "100%",
               objectFit: "cover",
               borderRadius: "4px",
             }}
@@ -341,6 +341,7 @@ const LastStep = () => {
             alt=""
             style={{
               width: "100%",
+              height: "100%",
               objectFit: "cover",
               borderRadius: "4px",
             }}
