@@ -41,7 +41,7 @@ export function step1Validation({
       setSteps((prev) => prev.map((step) => (step.id === 0 ? { ...step, isCompleted: true } : step)));
     }
 
-    if (isCarLoaded || !isCarLoaded) {
+    if (isCarLoaded || isCarLoaded === false) {
       if (isCarLoaded && weightInKg && typeOfLoad.length > 0) {
         setSteps((prev) => prev.map((step) => (step.id === 0 ? { ...step, isCompleted: true } : step)));
       } else if (!isCarLoaded) {

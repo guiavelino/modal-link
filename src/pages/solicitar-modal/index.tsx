@@ -103,9 +103,7 @@ const FirstStep = () => {
         type="text"
         placeholder="Localização"
         name="location"
-        icon={
-          <PiMapPinFill />
-        }
+        icon={<PiMapPinFill />}
         iconOnClick={getLocation}
         onChange={(event) => {
           const { value } = event.target;
@@ -423,7 +421,7 @@ export default function RequestModal() {
       </section>
 
       <Button
-        disabled={!steps[activeStep].isCompleted}
+        disabled={!steps[activeStep].isCompleted && activeStep !== 5}
         onClick={handleNext}
         variant="contained"
         className={styles.nextButton}
