@@ -49,7 +49,6 @@ export function RequestModalProvider({ children }: RequestModalProviderProps) {
         selectedVehicle,
         weightInKg,
       });
-      console.log("primeiro");
     } else if (activeStep > 0 && activeStep < 5) {
       stepPhotosValidation({
         frontPhoto,
@@ -59,10 +58,8 @@ export function RequestModalProvider({ children }: RequestModalProviderProps) {
         setSteps,
         activeStep,
       });
-      console.log("fotos");
     } else if (activeStep === 5) {
       setSteps((prev) => prev.map((step) => ({ ...step, isCompleted: true })));
-      console.log("ultimo");
       return;
     }
   }, [
