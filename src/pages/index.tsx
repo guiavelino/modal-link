@@ -25,7 +25,7 @@ export default function Login() {
 
     if (response?.status === 200) {
       setError(null);
-      push('/solicitacoes/1');
+      push('/solicitacoes');
     } else {
       setError("E-mail ou senha inválidos.");
     }
