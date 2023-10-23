@@ -3,6 +3,8 @@ import bcrypt from 'bcrypt';
 import Credentials from 'next-auth/providers/credentials';
 import { PrismaClient } from '@prisma/client';
 import jwt from "jsonwebtoken"
+import jwtDecode from 'jwt-decode';
+import { JWT } from 'next-auth/jwt';
 
 const prisma = new PrismaClient();
 
@@ -26,13 +28,48 @@ export default NextAuth({
       },
     }),
   ],
-    jwt: {
-        maxAge: 60 * 60 * 24 * 30,
-        async encode({ secret, token }) {
-            return jwt.sign(token, secret)
-        },
-        async decode({ secret, token }) {
-            return jwt.verify(token, secret)
-        },
-    },    
+  jwt: {
+    secret: process.env.NEXTAUTH_SECRET,
+    encode: async ({ secret, token }) => {
+      if (token) {
+        const user = await prisma.user.findUnique({ where: { email: token.email ?? '' } });
+        
+        token.accessToken = jwt.sign({
+          id: user?.id,
+          name: user?.name, 
+          lastName: user?.lastName,
+          fullName: user?.fullName,
+          email: user?.email,
+          cpf: user?.cpf
+        }, secret);
+      }
+
+      return jwt.sign({ ...token }, secret, { algorithm: 'HS256' });
+    },
+    decode: ({ secret, token }) => {
+      return jwt.verify(token as string, secret, { algorithms: ['HS256'], maxAge: 24 * 60 * 60 }) as JWT;
+    }
+  },
+  callbacks: {
+    session({ session, token }) {
+      session.user = jwtDecode(token.accessToken as string);
+      return session;
+    },
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    maxAge: 24 * 60 * 60,
+    updateAge: 24 * 60 * 60,
+    strategy: 'jwt',
+  },
+  cookies: {
+    sessionToken: {
+      name: 'next-auth.session-token',
+      options: {
+        secure: true,
+        path: '/',
+        sameSite: 'lax',
+      }
+    }
+  }
 });
