@@ -1,6 +1,7 @@
-import { Button } from "@mui/material";
+import { Backdrop, Button, CircularProgress } from "@mui/material";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
+import { useRouter } from "next/router";
 
 import Input from "@/components/Input";
 import styles from './styles.module.scss';
@@ -8,6 +9,7 @@ import { cpfMask } from "@/helpers/mask";
 import { validateCPF, validateEmail } from "@/helpers/validations";
 
 export default function SignUp() {
+  const { push } = useRouter();
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
   const [cpf, setCpf] = useState("");
@@ -15,6 +17,7 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const validateFields = (): boolean => name.length > 0 && lastName.length > 0 && cpf.length > 0 && email.length > 0 && password.length > 0 && confirmPassword.length > 0;
   
@@ -37,17 +40,27 @@ export default function SignUp() {
     return false;
   }
 
-  const submit = (e: FormEvent<HTMLFormElement>) => {
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     if (!validate()) return;
 
-    console.log(name)
-    console.log(lastName)
-    console.log(cpf)
-    console.log(email)
-    console.log(password)
-    console.log(confirmPassword)
+    setLoading(true);
+
+    const response = await fetch('/api/user', {
+      method: 'POST',
+      body: JSON.stringify({ name, lastName, cpf, email, password })
+    });
+
+    const data = await response.json();
+
+    if (response.status === 201) {
+      push('/');
+    } else {
+      setError(data.message);
+    }
+      
+    setLoading(false);
   }
   
   return (
@@ -128,6 +141,10 @@ export default function SignUp() {
           Já possui uma conta? <Link href="/">Entrar</Link>
         </p>
       </footer>
+
+      <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </main>
   )
 }
