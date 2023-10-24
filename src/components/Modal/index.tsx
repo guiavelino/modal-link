@@ -72,7 +72,7 @@ export default function CustomizedDialogs({ open, setOpen }: ModalProps) {
                         <p>ABC-1234</p>
                     </Grid>
                     <Grid item xs={3}>
-                        <h3>Altua</h3>
+                        <h3>Altura</h3>
                         <p>4,20m</p>
                     </Grid>
                     <Grid item xs={3}>

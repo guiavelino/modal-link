@@ -60,11 +60,13 @@ model Modal {
 model Vehicle {
   id           Int      @id @default(autoincrement())
   userId       Int
+  brand String
+  model String
+  year Int
   transitBoard String
   height       Float
   width        Float
   weight       Float
-  isAxle       Boolean
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt @default(now())
   user         User     @relation(fields: [userId], references: [id])

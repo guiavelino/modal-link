@@ -2,6 +2,7 @@ import { Backdrop, Button, CircularProgress } from "@mui/material";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/router";
+import { signIn } from "next-auth/react";
 
 import Input from "@/components/Input";
 import styles from './styles.module.scss';
@@ -55,12 +56,15 @@ export default function SignUp() {
     const data = await response.json();
 
     if (response.status === 201) {
-      push('/');
+      const response = await signIn('credentials', { redirect: false, email, password });
+
+      if (response?.status === 200) {
+        push('/solicitacoes');
+      }
     } else {
       setError(data.message);
+      setLoading(false);
     }
-      
-    setLoading(false);
   }
   
   return (
