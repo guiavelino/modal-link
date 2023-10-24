@@ -63,7 +63,7 @@ model Vehicle {
   brand String
   model String
   year Int
-  transitBoard String
+  transitBoard String   @unique
   height       Float
   width        Float
   weight       Float

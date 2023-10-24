@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import { MdClose } from 'react-icons/md';
-import { FormEvent, forwardRef, useState } from 'react';
+import { Dispatch, FormEvent, SetStateAction, forwardRef, useState } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { Alert, AlertColor, Backdrop, CircularProgress, Snackbar } from '@mui/material';
@@ -15,6 +15,7 @@ import { Alert, AlertColor, Backdrop, CircularProgress, Snackbar } from '@mui/ma
 import styles from './styles.module.scss';
 import Input from '../Input';
 import Logo from '../../../public/logo.png';
+import { Vehicle } from '@prisma/client';
 
 const Transition = forwardRef(function Transition(
     props: TransitionProps & {
@@ -26,22 +27,24 @@ const Transition = forwardRef(function Transition(
 });
 
 type VehicleModalProps = {
-    isOpen: boolean;
     ownsVehicle: boolean;
+    isOpen: boolean;
+    setIsOpen?: Dispatch<SetStateAction<boolean>>;
+    vehicle?: Vehicle;
 }
 
-export default function VehicleModal({ isOpen, ownsVehicle }: VehicleModalProps) {
+export default function VehicleModal({ ownsVehicle, isOpen, setIsOpen, vehicle }: VehicleModalProps) {
     const { data: session } = useSession();
 
     const [open, setOpen] = useState(isOpen);
     const [loading, setLoading] = useState(false);
-    const [brand, setBrand] = useState("");
-    const [model, setModel] = useState("");
-    const [year, setYear] = useState("");
-    const [transitBoard, setTransitBoard] = useState("");
-    const [height, setHeight] = useState("");
-    const [width, setWidth] = useState("");
-    const [weight, setWeight] = useState("");
+    const [brand, setBrand] = useState(vehicle?.brand ?? "");
+    const [model, setModel] = useState(vehicle?.model ?? "");
+    const [year, setYear] = useState((vehicle?.year ?? "") as string);
+    const [transitBoard, setTransitBoard] = useState(vehicle?.transitBoard ?? "");
+    const [height, setHeight] = useState((vehicle?.height ?? "") as string);
+    const [width, setWidth] = useState((vehicle?.width ?? "") as string);
+    const [weight, setWeight] = useState((vehicle?.weight ?? "") as string);
     const [alert, setAlert] = useState({ severity: "success", message: "Cadastro realizado com sucesso!" });
     const [showAlert, setShowAlert] = useState(false);
 
@@ -49,6 +52,10 @@ export default function VehicleModal({ isOpen, ownsVehicle }: VehicleModalProps)
 
     const handleClose = () => {
         setOpen(false);
+
+        if (setIsOpen) {
+            setIsOpen(false);
+        }
     };
 
     const submit = async (e: FormEvent<HTMLFormElement>) => {
@@ -56,25 +63,44 @@ export default function VehicleModal({ isOpen, ownsVehicle }: VehicleModalProps)
 
         setLoading(true);
 
-        const response = await fetch('/api/vehicle', {
-            method: 'POST',
-            body: JSON.stringify({
-                userId: session?.user.id,
-                brand,
-                model,
-                year: parseInt(year),
-                transitBoard,
-                height: parseFloat(height),
-                width: parseFloat(width),
-                weight: parseFloat(weight)
-            })
-        });
+        let response: Response;
+
+        if (ownsVehicle) {
+            response = await fetch('/api/vehicle', {
+                method: 'PUT',
+                body: JSON.stringify({
+                    id: vehicle?.id,
+                    userId: session?.user.id,
+                    brand,
+                    model,
+                    year: parseInt(year),
+                    transitBoard,
+                    height: parseFloat(height),
+                    width: parseFloat(width),
+                    weight: parseFloat(weight)
+                })
+            });
+        } else {
+            response = await fetch('/api/vehicle', {
+                method: 'POST',
+                body: JSON.stringify({
+                    userId: session?.user.id,
+                    brand,
+                    model,
+                    year: parseInt(year),
+                    transitBoard,
+                    height: parseFloat(height),
+                    width: parseFloat(width),
+                    weight: parseFloat(weight)
+                })
+            });
+        }
         
         setShowAlert(true);
 
         const data = await response.json();
     
-        if (response.status === 201) {
+        if (response.status === 201 || response.status === 200) {
             handleClose();
         } else {
             setAlert({ severity: "error", message: data.message })
@@ -180,7 +206,7 @@ export default function VehicleModal({ isOpen, ownsVehicle }: VehicleModalProps)
                     className={styles.submitButton}
                     disabled={disableSubmitButton} 
                 >
-                    Continuar
+                    {ownsVehicle ? 'Atualizar' : "Cadastrar"}
                 </Button>
             </form>
 
@@ -199,5 +225,5 @@ export default function VehicleModal({ isOpen, ownsVehicle }: VehicleModalProps)
                 </Alert>
             </Snackbar>
         </Dialog>
-  );
+    );
 }
