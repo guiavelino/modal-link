@@ -7,10 +7,10 @@ import Typography from '@mui/material/Typography';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import { MdClose } from 'react-icons/md';
-import { Dispatch, FormEvent, SetStateAction, forwardRef, useState } from 'react';
+import { FormEvent, forwardRef, useState } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import { Backdrop, CircularProgress } from '@mui/material';
+import { Alert, AlertColor, Backdrop, CircularProgress, Snackbar } from '@mui/material';
 
 import styles from './styles.module.scss';
 import Input from '../Input';
@@ -42,6 +42,8 @@ export default function VehicleModal({ isOpen, ownsVehicle }: VehicleModalProps)
     const [height, setHeight] = useState("");
     const [width, setWidth] = useState("");
     const [weight, setWeight] = useState("");
+    const [alert, setAlert] = useState({ severity: "success", message: "Cadastro realizado com sucesso!" });
+    const [showAlert, setShowAlert] = useState(false);
 
     const disableSubmitButton = !brand.length || !model.length || !year.length || !transitBoard.length || !height.length || !width.length || !weight.length;
 
@@ -67,13 +69,15 @@ export default function VehicleModal({ isOpen, ownsVehicle }: VehicleModalProps)
                 weight: parseFloat(weight)
             })
         });
-      
+        
+        setShowAlert(true);
+
         const data = await response.json();
     
         if (response.status === 201) {
-            console.log(data);
+            handleClose();
         } else {
-            console.log(data.message);
+            setAlert({ severity: "error", message: data.message })
         }
         
         setLoading(false);
@@ -183,6 +187,17 @@ export default function VehicleModal({ isOpen, ownsVehicle }: VehicleModalProps)
             <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
                 <CircularProgress color="inherit" />
             </Backdrop>
+
+            <Snackbar open={showAlert} autoHideDuration={6000} onClose={() => setShowAlert(false)}>
+                <Alert 
+                    onClose={() => setShowAlert(false)} 
+                    variant="filled"
+                    severity={alert.severity as AlertColor} 
+                    sx={{ width: '100%' }}
+                >
+                    {alert.message}
+                </Alert>
+            </Snackbar>
         </Dialog>
   );
 }
