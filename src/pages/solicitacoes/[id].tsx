@@ -31,25 +31,88 @@ function VerticalLinearStepper() {
 }
 
 export default function Requests() {
+    const [minutes, setMinutes] = useState("");
+    const [kilometers, setKilometers] = useState("");
     const mapContainer = useRef<any>(null);
     const map = useRef<mapboxgl.Map | any>(null);
     const router = useRouter();
     mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_GL_ACCESS_TOKEN ?? '';
     
+    const convertToMinutes = (durationInSeconds: number) => (durationInSeconds / 60).toFixed(0);
+    
+    const convertToKilometers = (distanceInMeters: number) => (distanceInMeters / 1000).toFixed(2).replace('.', ',');
+
+    const calculateDestinationCoordinates = (lat: number, lon: number, bearing: number = 45, radiusInKilometers: number = 1) => {
+        const radiusOfEarth = 6371; // Raio médio da Terra em quilômetros
+      
+        // Converte os ângulos de graus para radianos
+        const lat1 = (lat * Math.PI) / 180;
+        const lon1 = (lon * Math.PI) / 180;
+        const angularDistance = radiusInKilometers / radiusOfEarth;
+      
+        // Converte o rumo de graus para radianos
+        const bearingRad = (bearing * Math.PI) / 180;
+      
+        // Calcula as coordenadas da nova posição
+        const lat2 = Math.asin(Math.sin(lat1) * Math.cos(angularDistance) + Math.cos(lat1) * Math.sin(angularDistance) * Math.cos(bearingRad));
+        const lon2 = lon1 + Math.atan2(Math.sin(bearingRad) * Math.sin(angularDistance) * Math.cos(lat1), Math.cos(angularDistance) - Math.sin(lat1) * Math.sin(lat2));
+      
+        // Converte as coordenadas de volta para graus
+        const newLat = (lat2 * 180) / Math.PI;
+        const newLon = (lon2 * 180) / Math.PI;
+      
+        return { latitude: newLat, longitude: newLon };
+    }
+
     const position = async () => {
         await navigator.geolocation.getCurrentPosition(
-          position => {
+          async userPosition => {
+            const modalDriverPosition = calculateDestinationCoordinates(userPosition.coords.latitude, userPosition.coords.longitude, userPosition.timestamp);
+            
+            const query = await fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${userPosition.coords.longitude},${userPosition.coords.latitude};${modalDriverPosition.longitude},${modalDriverPosition.latitude}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`);
+            const json = await query.json();
+            const data = json.routes[0];
+            const route = data.geometry.coordinates;
+
+            setMinutes(convertToMinutes(data.duration))
+
+            setKilometers(convertToKilometers(data.distance))
+
             map.current = new mapboxgl.Map({
                 container: mapContainer.current,
                 style: 'mapbox://styles/mapbox/streets-v12',
-                center: [position?.coords?.longitude, position?.coords?.latitude],
+                center: [userPosition.coords.longitude, userPosition.coords.latitude],
                 zoom: 15
             });
-
-            new mapboxgl.Marker().setLngLat([position?.coords?.longitude, position?.coords?.latitude]).addTo(map.current);
+    
+            new mapboxgl.Marker({ color: 'red' }).setLngLat([userPosition.coords.longitude, userPosition.coords.latitude]).addTo(map.current);
+    
+            new mapboxgl.Marker().setLngLat([modalDriverPosition.longitude, modalDriverPosition.latitude]).addTo(map.current);
+    
+            map.current.on('load', function() {
+                if (!map.current.getLayer('route')) {
+                    map.current.addLayer({
+                        id: 'route',
+                        type: 'line',
+                        source: {
+                            type: 'geojson',
+                            data: {
+                                type: 'Feature',
+                                properties: {},
+                                geometry: {
+                                    type: 'LineString',
+                                    coordinates: route
+                                }
+                            }
+                        },
+                        layout: { 'line-join': 'round', 'line-cap': 'round' },
+                        paint: { 'line-color': '#1976d2', 'line-width': 8 }
+                    });
+                }
+            });
           }
         );
-    }
+    };
 
     useEffect(() => {
         position();
@@ -58,7 +121,7 @@ export default function Requests() {
     return (
         <main className={styles.reqContainer}>
             <header className={styles.header}>
-                <IconButton color="inherit" onClick={() => router.back()} style={{ margin: "0", padding: "0" }}>
+                <IconButton color="inherit" onClick={() => router.push('/solicitacoes')} style={{ margin: "0", padding: "0" }}>
                     <MdKeyboardArrowLeft size={32}/>
                 </IconButton>
                 <h1>Status da solicitação</h1>
@@ -67,7 +130,7 @@ export default function Requests() {
 
             <VerticalLinearStepper />
 
-            <div  ref={mapContainer} className={styles.map} />
+            <div ref={mapContainer} className={styles.map} />
 
             <section className={styles.modalInfoContainer}>
                 <div className={styles.driverContainer}>
@@ -86,11 +149,11 @@ export default function Requests() {
                 </div>
                 <div className={styles.statisticsInfo}>
                     <div className={styles.distanceInfoContainer}>
-                        <h3>1,2 km</h3>
+                        <h3>{kilometers} km</h3>
                         <p>Distância</p>
                     </div>
                     <div className={styles.timeInfoContainer}>
-                        <h3>5 min</h3>
+                        <h3>{minutes} min</h3>
                         <p>Tempo estimado</p>
                     </div>
                 </div>
