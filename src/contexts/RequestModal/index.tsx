@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 
-import { RequestModalProviderProps, IRequestModalContext, TVehicle } from "./types";
+import { RequestModalProviderProps, IRequestModalContext, TVehicle, TProblem, TTypeLoad } from "./types";
 import { ImageListType } from "react-images-uploading";
 import { step1Validation } from "./stepsFormValidations/step1Validation";
 import { stepPhotosValidation } from "./stepsFormValidations/stepPhotosValidation";
@@ -23,11 +23,11 @@ export function RequestModalProvider({ children }: RequestModalProviderProps) {
   // STEP 1
   const [selectedVehicle, setSelectedVehicle] = useState<TVehicle | undefined>();
   const [localization, setLocalization] = useState<string>("");
-  const [problems, setProblems] = useState<string[]>([]);
+  const [problems, setProblems] = useState<TProblem[]>([]);
   const [problemDescription, setProblemDescription] = useState<string>("");
   const [isCarLoaded, setIsCarLoaded] = useState<boolean | undefined>();
   const [weightInKg, setWeightInKg] = useState<number | undefined>();
-  const [typeOfLoad, setTypeOfLoad] = useState<string[]>([]);
+  const [typeOfLoad, setTypeOfLoad] = useState<TTypeLoad[]>([]);
 
   const [frontPhoto, setFrontPhoto] = useState<ImageListType[]>([]);
   const [leftPhoto, setLeftPhoto] = useState<ImageListType[]>([]);

@@ -28,12 +28,12 @@ export function step1Validation({
   setWeightInKg,
   setTypeOfLoad,
 }: Step1ValidationProps) {
-  if (!problems.includes("Outros")) {
+  if (!problems.find((problem) => problem.id === 15)) {
     setProblemDescription("");
   }
 
   if (selectedVehicle && localization.length > 0 && problems.length > 0) {
-    if (problems.includes("Outros") && problemDescription.length === 0) {
+    if (problems.find((problem) => problem.id === 15) && problemDescription.length === 0) {
       setSteps((prev) => prev.map((step) => (step.id === 0 ? { ...step, isCompleted: false } : step)));
 
       return;

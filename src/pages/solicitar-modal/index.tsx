@@ -1,4 +1,8 @@
-import { useState } from "react";
+import { GetServerSideProps } from "next";
+import Image from "next/image";
+import { Problem, TypeLoad, Vehicle } from "@prisma/client";
+import { ImageType } from "react-images-uploading";
+import { useEffect, useState } from "react";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
@@ -24,14 +28,17 @@ import rightTruck from "../../../public/right-truck.jpg";
 import backTruck from "../../../public/back-truck.jpg";
 import { useRequestModal } from "@/hooks/useRequestModal";
 import CustomizedDialogs from "@/components/Modal";
-import Image from "next/image";
-import { Vehicle } from "@prisma/client";
-import { ImageType } from "react-images-uploading";
 
-const FirstStep = () => {
-  const [vehicles] = useState<Pick<Vehicle, "id" | "transitBoard">[]>([
-    { id: 1, transitBoard: "Volvo FH16 - ABC-1234" },
-  ]);
+type RequestsProps = {
+  vehicles: Vehicle[];
+  problems: Problem[];
+  typeLoads: TypeLoad[];
+};
+
+const FirstStep = ({ vehicles: vehiclesData, problems: problemsData, typeLoads: typeLoadsData }: RequestsProps) => {
+  const [vehicles] = useState<Vehicle[]>(vehiclesData);
+  const [selectedProblems, setSelectedProblems] = useState<string[]>([]);
+  const [selectedTypeOfLoad, setSelectedTypeOfLoad] = useState<string[]>([]);
 
   const {
     selectedVehicle,
@@ -84,6 +91,32 @@ const FirstStep = () => {
     }
   };
 
+  useEffect(() => {
+    if (selectedProblems.length > 0) {
+      const problems = selectedProblems
+        .map((selectedProblem) => {
+          const problem = problemsData.find((problem) => problem.name === selectedProblem);
+          return problem;
+        })
+        .filter(Boolean) as Problem[];
+
+      setProblems(problems);
+    }
+  }, [selectedProblems]);
+
+  useEffect(() => {
+    if (selectedTypeOfLoad.length > 0) {
+      const typeOfLoad = selectedTypeOfLoad
+        .map((selectedTypeOfLoad) => {
+          const typeOfLoad = typeLoadsData.find((typeOfLoad) => typeOfLoad.name === selectedTypeOfLoad);
+          return typeOfLoad;
+        })
+        .filter(Boolean) as TypeLoad[];
+
+      setTypeOfLoad(typeOfLoad);
+    }
+  }, [selectedTypeOfLoad]);
+
   return (
     <div className={styles.firstStepFormulary}>
       <SelectComponent
@@ -92,11 +125,7 @@ const FirstStep = () => {
           return { id: vehicle.id, description: vehicle.transitBoard };
         })}
         selected={selectedVehicle?.id}
-        setSelected={(id) =>
-          setSelectedVehicle(
-            vehicles.find((vehicle) => vehicle.id === id) ?? { id: 1, transitBoard: "Volvo FH16 - ABC-1234" }
-          )
-        }
+        setSelected={(id) => setSelectedVehicle(vehicles.find((vehicle) => vehicle.id === id))}
       />
 
       <Input
@@ -122,12 +151,12 @@ const FirstStep = () => {
 
       <MultipleSelectChip
         placeholder="Problema(s)"
-        options={["Falta de combustível", "Pneu furado", "Outros"]}
-        checkedOptions={problems}
-        setCheckedOptions={setProblems}
+        options={problemsData.map((problem) => problem.name)}
+        checkedOptions={problems.map((problem) => problem.name)}
+        setCheckedOptions={setSelectedProblems}
       />
 
-      {problems.includes("Outros") && (
+      {problems.find((problem) => problem.id === 15) && (
         <TextArea
           placeholder="Descreva o problema do veículo..."
           value={problemDescription}
@@ -154,9 +183,9 @@ const FirstStep = () => {
         <>
           <MultipleSelectChip
             placeholder="Tipo de carga"
-            options={["Carga frágil", "Carga perecível"]}
-            checkedOptions={typeOfLoad}
-            setCheckedOptions={setTypeOfLoad}
+            options={typeLoadsData.map((typeLoad) => typeLoad.name)}
+            checkedOptions={typeOfLoad.map((typeLoad) => typeLoad.name)}
+            setCheckedOptions={setSelectedTypeOfLoad}
           />
 
           <Input
@@ -259,12 +288,13 @@ const LastStep = () => {
         <h3>Problema</h3>
         <div className={styles.pillContainer}>
           {problems.map((problem, idx) => (
-            <span key={`${problem}-${idx}`}>{problem}</span>
+            <span key={`${problem}-${idx}`}>{problem.name}</span>
           ))}
         </div>
-        {problems.includes("Outros") && (
+
+        {problems.find((problem) => problem.id === 15) && (
           <>
-            <h3 style={{ marginTop: 8 }}>Descrição do Problema</h3>
+            <h3 style={{ marginTop: 8 }}>Descrição do problema</h3>
             <p>{problemDescription}</p>
           </>
         )}
@@ -275,7 +305,7 @@ const LastStep = () => {
           <h3>Carga do veículo</h3>
           <div className={styles.pillContainer}>
             {typeOfLoad.map((load, idx) => (
-              <span key={`${load}-${idx}`}>{load}</span>
+              <span key={`${load}-${idx}`}>{load.name}</span>
             ))}
           </div>
           <h3 style={{ marginTop: 8 }}>Peso estimado da carga (Kg)</h3>
@@ -350,7 +380,7 @@ const LastStep = () => {
   );
 };
 
-export default function RequestModal() {
+export default function RequestModal({ vehicles, problems, typeLoads }: RequestsProps) {
   const router = useRouter();
   const { activeStep, setActiveStep, steps, setSteps } = useRequestModal();
   const [openModal, setOpenModal] = useState(false);
@@ -412,7 +442,7 @@ export default function RequestModal() {
       </section>
 
       <section className={styles.content}>
-        {activeStep === 0 && <FirstStep />}
+        {activeStep === 0 && <FirstStep vehicles={vehicles} problems={problems} typeLoads={typeLoads} />}
         {activeStep === 1 && <SecondStep />}
         {activeStep === 2 && <ThirdStep />}
         {activeStep === 3 && <FourthStep />}
@@ -449,3 +479,21 @@ export default function RequestModal() {
     </main>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const token = req.cookies["next-auth.session-token"];
+
+  const vehiclesResponse = await fetch(`${process.env.BASE_URL}/api/user/vehicles`, {
+    headers: {
+      Cookie: `next-auth.session-token=${token}`,
+    },
+  });
+  const problemsResponse = await fetch(`${process.env.BASE_URL}/api/problem`);
+  const typeLoadsResponse = await fetch(`${process.env.BASE_URL}/api/type-load`);
+
+  const vehicles = await vehiclesResponse.json();
+  const { problems } = await problemsResponse.json();
+  const { typeLoads } = await typeLoadsResponse.json();
+
+  return { props: { vehicles, problems, typeLoads } };
+};
