@@ -114,3 +114,61 @@
     }
 }
 
+.requestsContainer {
+    background-color: rgba(228, 228, 228, 0.5);
+
+    .tabsContainer {
+        background-color: #fff;
+
+        button {
+            width: 50%;
+        }
+    }
+
+    .vehicleContainer {
+        height: calc(100vh - 120px);
+        padding: 12px;
+
+        .cardVehicleContainer {
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            height: 140px;
+            width: 100%;
+            border-radius: 4px;
+    
+            h3 {
+                color: #989898;
+                font-size: 0.875rem;
+            }
+        }
+
+        .addButton {
+            background-color: #66B2FF;
+            color: #fff;
+        }
+    }
+
+    footer.appBar {
+        position: fixed;
+        bottom: 0;
+        height: 80px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 12px;
+        border-top: 1px solid #c5c5c5;
+        background-color: #ffffff;
+
+        a, button {
+            width: 100%;
+        }
+
+        button {
+            height: 40px;
+            background-color: #00a1fc;
+        }
+    }
+}
+

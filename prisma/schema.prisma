@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -18,23 +21,25 @@ model UserType {
 }
 
 model User {
-  id         Int       @id @default(autoincrement())
+  id         Int            @id @default(autoincrement())
   userTypeId Int
   name       String
   lastName   String
   fullName   String
-  email      String    @unique
+  email      String         @unique
   password   String
-  cpf        String    @unique
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @default(now()) @updatedAt
-  userType   UserType  @relation(fields: [userTypeId], references: [id])
+  cpf        String         @unique
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @default(now()) @updatedAt
+  userType   UserType       @relation(fields: [userTypeId], references: [id])
   vehicle    Vehicle[]
+  modal      Modal[]
+  order      OrderService[]
 
   @@index([userTypeId])
 }
 
-model ModalCateogry {
+model ModalCategory {
   id        Int      @id @default(autoincrement())
   name      String
   createdAt DateTime @default(now())
@@ -43,92 +48,114 @@ model ModalCateogry {
 }
 
 model Modal {
-  id              Int           @id @default(autoincrement())
+  id              Int            @id @default(autoincrement())
   modalCategoryId Int
-  transitBoard    String
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @default(now()) @updatedAt
-  modalCategory   ModalCateogry @relation(fields: [modalCategoryId], references: [id])
-  order           Order[]
+  userId          Int
+  transitBoard    String         @unique
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @default(now()) @updatedAt
+  modalCategory   ModalCategory  @relation(fields: [modalCategoryId], references: [id])
+  user            User           @relation(fields: [userId], references: [id])
+  order           OrderService[]
 
-  @@index([modalCategoryId])
+  @@index([modalCategoryId, userId])
 }
 
 model Vehicle {
-  id           Int      @id @default(autoincrement())
+  id           Int            @id @default(autoincrement())
   userId       Int
-  transitBoard String
-  height       Float
-  width        Float
-  weight       Float
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now()) @updatedAt
   brand        String
   model        String
   year         Int
-  user         User     @relation(fields: [userId], references: [id])
-  order        Order[]
+  transitBoard String         @unique
+  height       Float
+  width        Float
+  weight       Float
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now()) @updatedAt
+  user         User           @relation(fields: [userId], references: [id])
+  order        OrderService[]
 
   @@index([userId])
 }
 
 model OrderStatus {
-  id        Int      @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  order     Order[]
+  id                  Int                   @id @default(autoincrement())
+  name                String
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @default(now()) @updatedAt
+  order               OrderService[]
+  orderServiceHistory OrderServiceHistory[]
 }
 
 model Problem {
-  id        Int      @id @default(autoincrement())
+  id        Int                     @id @default(autoincrement())
   name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  order     Order[]
+  createdAt DateTime                @default(now())
+  updatedAt DateTime                @default(now()) @updatedAt
+  order     OrderServiceToProblem[]
 }
 
 model TypeLoad {
-  id        Int      @id @default(autoincrement())
+  id        Int                      @id @default(autoincrement())
   name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  order     Order[]
+  createdAt DateTime                 @default(now())
+  updatedAt DateTime                 @default(now()) @updatedAt
+  order     OrderServiceToTypeLoad[]
 }
 
-model Order {
-  id                 Int         @id @default(autoincrement())
-  modalId            Int
-  vehicleId          Int
-  orderStatusId      Int
-  location           String
-  problemDescription String?
-  loadWeight         Float?
-  createdAt          DateTime    @default(now())
-  updatedAt          DateTime    @default(now()) @updatedAt
-  modal              Modal       @relation(fields: [modalId], references: [id])
-  vehicle            Vehicle     @relation(fields: [vehicleId], references: [id])
-  orderStatus        OrderStatus @relation(fields: [orderStatusId], references: [id])
-  problem            Problem[]
-  typeLoad           TypeLoad[]
+model OrderService {
+  id                  Int                      @id @default(autoincrement())
+  modalId             Int
+  vehicleId           Int
+  userId              Int
+  orderStatusId       Int
+  userLatitude        String
+  userLongitude       String
+  problemDescription  String?
+  loadWeight          Float?
+  createdAt           DateTime                 @default(now())
+  updatedAt           DateTime                 @default(now()) @updatedAt
+  modal               Modal                    @relation(fields: [modalId], references: [id])
+  vehicle             Vehicle                  @relation(fields: [vehicleId], references: [id])
+  user                User                     @relation(fields: [userId], references: [id])
+  orderStatus         OrderStatus              @relation(fields: [orderStatusId], references: [id])
+  problem             OrderServiceToProblem[]
+  typeLoad            OrderServiceToTypeLoad[]
+  orderServiceHistory OrderServiceHistory[]
 
-  @@index([modalId, vehicleId, orderStatusId])
+  @@index([modalId, vehicleId, userId, orderStatusId])
 }
 
-model OrderToProblem {
-  A Int
-  B Int
+model OrderServiceToProblem {
+  orderServiceId Int
+  problemId      Int
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now()) @updatedAt
+  orderService   OrderService @relation(fields: [orderServiceId], references: [id])
+  problem        Problem      @relation(fields: [problemId], references: [id])
 
-  @@unique([A, B], map: "_OrderToProblem_AB_unique")
-  @@index([B], map: "_OrderToProblem_B_index")
-  @@map("_OrderToProblem")
+  @@id([orderServiceId, problemId])
 }
 
-model OrderToTypeLoad {
-  A Int
-  B Int
+model OrderServiceToTypeLoad {
+  orderServiceId Int
+  typeLoadId     Int
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now()) @updatedAt
+  orderService   OrderService @relation(fields: [orderServiceId], references: [id])
+  typeLoad       TypeLoad     @relation(fields: [typeLoadId], references: [id])
 
-  @@unique([A, B], map: "_OrderToTypeLoad_AB_unique")
-  @@index([B], map: "_OrderToTypeLoad_B_index")
-  @@map("_OrderToTypeLoad")
+  @@id([orderServiceId, typeLoadId])
+}
+
+model OrderServiceHistory {
+  orderServiceId Int
+  orderStatusId  Int
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now()) @updatedAt
+  orderService   OrderService @relation(fields: [orderServiceId], references: [id])
+  orderStatus    OrderStatus  @relation(fields: [orderStatusId], references: [id])
+
+  @@id([orderServiceId, orderStatusId])
 }

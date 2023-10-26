@@ -412,6 +412,11 @@ export default function RequestModal({ vehicles, problems, typeLoads }: Requests
   };
 
   const handleBack = () => {
+    if (activeStep === 0) {
+      router.push('/solicitacoes');
+      return;
+    }
+
     const lastStep = activeStep - 1;
 
     setActiveStep(lastStep);
@@ -423,7 +428,6 @@ export default function RequestModal({ vehicles, problems, typeLoads }: Requests
         <header className={styles.header}>
           <IconButton
             color="inherit"
-            disabled={activeStep === 0}
             onClick={handleBack}
             style={{ margin: "0", padding: "0" }}
           >
