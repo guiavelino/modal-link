@@ -2,11 +2,12 @@ import Header from '@/components/Header';
 import { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import { Vehicle } from '@prisma/client';
-import { Box, Button, Card, CardContent, Grid, Tab, Tabs } from '@mui/material';
+import { Box, Button, Card, CardContent, Fab, Grid, Tab, Tabs } from '@mui/material';
 
 import styles from './styles.module.scss';
 import VehicleModal from '@/components/VehicleModal';
 import Link from 'next/link';
+import { BiPlus } from 'react-icons/bi';
 
 type RequestsProps = {
   vehicles: Vehicle[]
@@ -16,7 +17,7 @@ const VehiclesTab = ({ vehicles }: RequestsProps) => {
   return (
     <main className={styles.vehicleContainer}>
       {vehicles.map(vehicle => (
-        <Card className={styles.cardVehicleContainer}>
+        <Card key={vehicle.id} className={styles.cardVehicleContainer}>
           <CardContent>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{ margin: 0, height: '100%' }}>
               <Grid item xs={3}>
@@ -51,6 +52,10 @@ const VehiclesTab = ({ vehicles }: RequestsProps) => {
           </CardContent>
         </Card>
       ))}
+
+      <Fab sx={{ position: 'absolute', bottom: 100, right: 16 }} className={styles.addButton}>
+        <BiPlus />
+      </Fab>
     </main>
   )
 }
@@ -87,7 +92,7 @@ export default function Requests({ vehicles : vehiclesData }: RequestsProps) {
 
         <footer className={styles.appBar}>
           <Link href="/solicitar-modal">
-            <Button variant='contained' color='primary'>Solicitar Modal</Button>
+            <Button variant='contained'>Solicitar Modal</Button>
           </Link>
         </footer>
       </main>
