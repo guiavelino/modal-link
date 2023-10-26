@@ -21,14 +21,14 @@ export default function Login() {
 
     const response = await signIn('credentials', { redirect: false, email, password });
 
-    setLoading(false);
-
     if (response?.status === 200) {
       setError(null);
       push('/solicitacoes');
     } else {
       setError("E-mail ou senha inválidos.");
     }
+
+    setLoading(false);
   }
   
   return (
