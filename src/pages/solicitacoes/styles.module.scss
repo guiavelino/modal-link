@@ -114,3 +114,46 @@
     }
 }
 
+.requestsContainer {
+    .actionsVehicleContainer {
+        padding: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .registerButton {
+            background-color: #00a1fc;
+            color: #fff;
+            margin-left: auto;
+        }
+    }
+
+    .tabsContainer {
+        button {
+            width: 50%;
+        }
+    }
+
+    footer.appBar {
+        position: fixed;
+        bottom: 0;
+        height: 80px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 12px;
+        border-top: 1px solid #999999;
+        background-color: #ffffff;
+
+        a, button {
+            width: 100%;
+        }
+
+        button {
+            height: 40px;
+            background-color: #00a1fc;
+        }
+    }
+}
+

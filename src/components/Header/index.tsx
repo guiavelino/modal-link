@@ -24,7 +24,7 @@ export default function Header() {
     };
 
     return (
-        <AppBar position="static">
+        <AppBar position="static" style={{ background: '#00a1fc' }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Box sx={{ flexGrow: 0 }}>
