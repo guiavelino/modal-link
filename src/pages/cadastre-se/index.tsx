@@ -142,7 +142,7 @@ export default function SignUp() {
 
       <footer>
         <p>
-          Já possui uma conta? <Link href="/">Entrar</Link>
+          Já possui uma conta? <Link href="/login">Entrar</Link>
         </p>
       </footer>
 

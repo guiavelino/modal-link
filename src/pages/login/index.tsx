@@ -4,7 +4,7 @@ import { signIn } from 'next-auth/react';
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/router";
 
-import styles from '../styles/Login.module.scss';
+import styles from './styles.module.scss';
 import Input from "@/components/Input";
 
 export default function Login() {
