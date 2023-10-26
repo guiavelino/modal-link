@@ -42,7 +42,7 @@ export default function Requests() {
     
     const convertToKilometers = (distanceInMeters: number) => (distanceInMeters / 1000).toFixed(2).replace('.', ',');
 
-    const calculateDestinationCoordinates = (lat: number, lon: number, bearing: number = 45, radiusInKilometers: number = 1) => {
+    const calculateModalDriverCoordinates = (lat: number, lon: number, bearing: number = 45, radiusInKilometers: number = 1) => {
         const radiusOfEarth = 6371; // Raio médio da Terra em quilômetros
       
         // Converte os ângulos de graus para radianos
@@ -67,7 +67,7 @@ export default function Requests() {
     const position = async () => {
         await navigator.geolocation.getCurrentPosition(
           async userPosition => {
-            const modalDriverPosition = calculateDestinationCoordinates(userPosition.coords.latitude, userPosition.coords.longitude, userPosition.timestamp);
+            const modalDriverPosition = calculateModalDriverCoordinates(userPosition.coords.latitude, userPosition.coords.longitude, userPosition.timestamp);
             
             const query = await fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${userPosition.coords.longitude},${userPosition.coords.latitude};${modalDriverPosition.longitude},${modalDriverPosition.latitude}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`);
             const json = await query.json();

@@ -33,6 +33,7 @@ model User {
   updatedAt  DateTime  @updatedAt @default(now())
   userType   UserType  @relation(fields: [userTypeId], references: [id])
   vehicle    Vehicle[]
+  modal     Modal[]
 
   @@index([userTypeId])
 }
@@ -48,13 +49,15 @@ model ModalCateogry {
 model Modal {
   id              Int           @id @default(autoincrement())
   modalCategoryId Int
+  userId       Int
   transitBoard    String
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt @default(now())
   modalCategory   ModalCateogry @relation(fields: [modalCategoryId], references: [id])
+  user            User          @relation(fields: [userId], references: [id])
   order           Order[]
 
-  @@index([modalCategoryId])
+  @@index([modalCategoryId, userId])
 }
 
 model Vehicle {
