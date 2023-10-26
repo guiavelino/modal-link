@@ -115,22 +115,32 @@
 }
 
 .requestsContainer {
-    .actionsVehicleContainer {
-        padding: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+    background-color: rgba(228, 228, 228, 0.5);
 
-        .registerButton {
-            background-color: #00a1fc;
-            color: #fff;
-            margin-left: auto;
+    .tabsContainer {
+        background-color: #fff;
+
+        button {
+            width: 50%;
         }
     }
 
-    .tabsContainer {
-        button {
-            width: 50%;
+    .vehicleContainer {
+        height: calc(100vh - 120px);
+        padding: 12px;
+
+        .cardVehicleContainer {
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            height: 140px;
+            width: 100%;
+            border-radius: 4px;
+    
+            h3 {
+                color: #989898;
+                font-size: 0.875rem;
+            }
         }
     }
 
@@ -143,7 +153,7 @@
         align-items: center;
         justify-content: center;
         padding: 0 12px;
-        border-top: 1px solid #999999;
+        border-top: 1px solid #c5c5c5;
         background-color: #ffffff;
 
         a, button {

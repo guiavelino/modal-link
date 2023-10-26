@@ -2,8 +2,7 @@ import Header from '@/components/Header';
 import { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import { Vehicle } from '@prisma/client';
-import { Box, Button, IconButton, Tab, Tabs, Tooltip } from '@mui/material';
-import { BiPlus } from 'react-icons/bi';
+import { Box, Button, Card, CardContent, Grid, Tab, Tabs } from '@mui/material';
 
 import styles from './styles.module.scss';
 import VehicleModal from '@/components/VehicleModal';
@@ -13,18 +12,45 @@ type RequestsProps = {
   vehicles: Vehicle[]
 }
 
-const VehiclesTab = () => {
+const VehiclesTab = ({ vehicles }: RequestsProps) => {
   return (
-    <main>
-      <header className={styles.actionsVehicleContainer}>
-        <Tooltip title="Cadastrar veículo">
-          <IconButton color='default' className={styles.registerButton}>
-            <BiPlus />
-          </IconButton>
-        </Tooltip>
-      </header>
-
-
+    <main className={styles.vehicleContainer}>
+      {vehicles.map(vehicle => (
+        <Card className={styles.cardVehicleContainer}>
+          <CardContent>
+            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{ margin: 0, height: '100%' }}>
+              <Grid item xs={3}>
+                  <h3>Marca</h3>
+                  <p>{vehicle.brand}</p>
+              </Grid>
+              <Grid item xs={3}>
+                  <h3>Modelo</h3>
+                  <p>{vehicle.model}</p>
+              </Grid>
+              <Grid item xs={3}>
+                  <h3>Ano</h3>
+                  <p>{vehicle.year}</p>
+              </Grid>
+              <Grid item xs={3}>
+                  <h3>Placa</h3>
+                  <p>{vehicle.transitBoard}</p>
+              </Grid>
+              <Grid item xs={3}>
+                  <h3>Altura</h3>
+                  <p>{vehicle.height}m</p>
+              </Grid>
+              <Grid item xs={3}>
+                  <h3>Largura</h3>
+                  <p>{vehicle.width}m</p>
+              </Grid>
+              <Grid item xs={3}>
+                  <h3>Peso</h3>
+                  <p>{vehicle.weight} kg</p>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
+      ))}
     </main>
   )
 }
@@ -56,7 +82,7 @@ export default function Requests({ vehicles : vehiclesData }: RequestsProps) {
           </Tabs>
         </Box>
 
-        {tab === 0 && <VehiclesTab />}
+        {tab === 0 && <VehiclesTab vehicles={vehicles} />}
         {tab === 1 && <RequestTab />}
 
         <footer className={styles.appBar}>
