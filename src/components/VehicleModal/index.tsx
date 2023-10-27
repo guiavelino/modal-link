@@ -16,6 +16,7 @@ import styles from "./styles.module.scss";
 import Input from "../Input";
 import Logo from "../../../public/logo.png";
 import { Vehicle } from "@prisma/client";
+import { decimalMask } from "@/helpers/mask";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -179,7 +180,7 @@ export default function VehicleModal({ ownsVehicle, isOpen, setIsOpen, vehicle }
           placeholder="Altura"
           name="height"
           value={height}
-          onChange={(e) => setHeight(e.target.value)}
+          onChange={(e) => setHeight(decimalMask(e.target.value))}
           required
         />
 
@@ -188,7 +189,7 @@ export default function VehicleModal({ ownsVehicle, isOpen, setIsOpen, vehicle }
           placeholder="Largura"
           name="width"
           value={width}
-          onChange={(e) => setWidth(e.target.value)}
+          onChange={(e) => setWidth(decimalMask(e.target.value))}
           required
         />
 
@@ -197,7 +198,7 @@ export default function VehicleModal({ ownsVehicle, isOpen, setIsOpen, vehicle }
           placeholder="Peso em (KG)"
           name="weight"
           value={weight}
-          onChange={(e) => setWeight(e.target.value)}
+          onChange={(e) => setWeight(decimalMask(e.target.value))}
           required
         />
 
