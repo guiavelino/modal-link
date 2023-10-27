@@ -24,7 +24,6 @@
     }
     
     .modalInfoContainer {
-        height: 148px;
         border-radius: 20px 20px 0px 0px;
         width: 100%;
         display: flex;
@@ -35,13 +34,13 @@
     
         .driverContainer,
         .statisticsInfo {
-            height: 50%;
             display: flex;
             align-items: center;
             justify-content: space-around;
         }
     
         .driverContainer {
+            height: 60px;
             padding: 0 12px;
             justify-content: space-between;
             background-color: #ffffff;
@@ -58,12 +57,12 @@
                     justify-content: space-between;
     
                     h3 {
-                        font-size: 1rem;
+                        font-size: 0.9375rem;
                     }
     
                     p {
                         color: #868585;
-                        font-size: 1rem;
+                        font-size: 0.875rem;
                     }
                 }
             }
@@ -79,7 +78,7 @@
                     background-color: #08399C;
                     color: #fff;
                     height: 16px;
-                    font-size: .75rem;
+                    font-size: 0.75rem;
                     display: flex;
                     justify-content: center;
                     align-items: center;
@@ -96,6 +95,7 @@
         }
     
         .statisticsInfo {
+            height: 48px;
             background-color: #D9D9D9;
 
             .distanceInfoContainer,
@@ -104,12 +104,12 @@
                 font-weight: bold;
 
                 h3 {
-                    font-size: 1rem;
+                    font-size: 0.9375rem;
                 }
 
                 p {
                     color: #868585;
-                    font-size: 1.125rem;
+                    font-size: 0.875rem;
                 }
             }
         }
