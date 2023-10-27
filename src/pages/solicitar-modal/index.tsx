@@ -37,8 +37,6 @@ type RequestsProps = {
 
 const FirstStep = ({ vehicles: vehiclesData, problems: problemsData, typeLoads: typeLoadsData }: RequestsProps) => {
   const [vehicles] = useState<Vehicle[]>(vehiclesData);
-  const [selectedProblems, setSelectedProblems] = useState<string[]>([]);
-  const [selectedTypeOfLoad, setSelectedTypeOfLoad] = useState<string[]>([]);
 
   const {
     selectedVehicle,
@@ -55,6 +53,10 @@ const FirstStep = ({ vehicles: vehiclesData, problems: problemsData, typeLoads: 
     setWeightInKg,
     typeOfLoad,
     setTypeOfLoad,
+    selectedTypeOfLoads,
+    setSelectedTypeOfLoads,
+    selectedProblems,
+    setSelectedProblems,
   } = useRequestModal();
 
   const [lon, setLon] = useState<number>();
@@ -92,37 +94,19 @@ const FirstStep = ({ vehicles: vehiclesData, problems: problemsData, typeLoads: 
   };
 
   useEffect(() => {
-    if (selectedProblems.length > 0) {
-      const problems = selectedProblems
-        .map((selectedProblem) => {
-          const problem = problemsData.find((problem) => problem.name === selectedProblem);
-          return problem;
-        })
-        .filter(Boolean) as Problem[];
-
-      setProblems(problems);
-    }
+    setProblems(problemsData.filter((problem) => selectedProblems.includes(problem.name)));
   }, [selectedProblems]);
 
   useEffect(() => {
-    if (selectedTypeOfLoad.length > 0) {
-      const typeOfLoad = selectedTypeOfLoad
-        .map((selectedTypeOfLoad) => {
-          const typeOfLoad = typeLoadsData.find((typeOfLoad) => typeOfLoad.name === selectedTypeOfLoad);
-          return typeOfLoad;
-        })
-        .filter(Boolean) as TypeLoad[];
-
-      setTypeOfLoad(typeOfLoad);
-    }
-  }, [selectedTypeOfLoad]);
+    setTypeOfLoad(typeLoadsData.filter((typeLoad) => selectedTypeOfLoads.includes(typeLoad.name)));
+  }, [selectedTypeOfLoads]);
 
   return (
     <div className={styles.firstStepFormulary}>
       <SelectComponent
         placeholder="Veículo"
         optionsProps={vehicles.map((vehicle) => {
-          return { id: vehicle.id, description: vehicle.transitBoard };
+          return { id: vehicle.id, description: `${vehicle.model} - ${vehicle.transitBoard}` };
         })}
         selected={selectedVehicle?.id}
         setSelected={(id) => setSelectedVehicle(vehicles.find((vehicle) => vehicle.id === id))}
@@ -139,6 +123,7 @@ const FirstStep = ({ vehicles: vehiclesData, problems: problemsData, typeLoads: 
           setLocalization(value);
         }}
         value={localization}
+        readOnly={true}
       />
 
       <Snackbar
@@ -185,7 +170,7 @@ const FirstStep = ({ vehicles: vehiclesData, problems: problemsData, typeLoads: 
             placeholder="Tipo de carga"
             options={typeLoadsData.map((typeLoad) => typeLoad.name)}
             checkedOptions={typeOfLoad.map((typeLoad) => typeLoad.name)}
-            setCheckedOptions={setSelectedTypeOfLoad}
+            setCheckedOptions={setSelectedTypeOfLoads}
           />
 
           <Input
@@ -382,7 +367,7 @@ const LastStep = () => {
 
 export default function RequestModal({ vehicles, problems, typeLoads }: RequestsProps) {
   const router = useRouter();
-  const { activeStep, setActiveStep, steps, setSteps } = useRequestModal();
+  const { activeStep, setActiveStep, steps, setSteps, selectedVehicle } = useRequestModal();
   const [openModal, setOpenModal] = useState(false);
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Procurando Modal adequado...");
@@ -413,7 +398,7 @@ export default function RequestModal({ vehicles, problems, typeLoads }: Requests
 
   const handleBack = () => {
     if (activeStep === 0) {
-      router.push('/solicitacoes');
+      router.push("/solicitacoes");
       return;
     }
 
@@ -426,11 +411,7 @@ export default function RequestModal({ vehicles, problems, typeLoads }: Requests
     <main className={styles.requestModal}>
       <section>
         <header className={styles.header}>
-          <IconButton
-            color="inherit"
-            onClick={handleBack}
-            style={{ margin: "0", padding: "0" }}
-          >
+          <IconButton color="inherit" onClick={handleBack} style={{ margin: "0", padding: "0" }}>
             <MdKeyboardArrowLeft size={32} />
           </IconButton>
           <h1>{steps[activeStep].label}</h1>
@@ -463,7 +444,7 @@ export default function RequestModal({ vehicles, problems, typeLoads }: Requests
         {activeStep === 5 ? "Confirmar" : "Continuar"}
       </Button>
 
-      <CustomizedDialogs open={openModal} setOpen={setOpenModal} />
+      <CustomizedDialogs open={openModal} setOpen={setOpenModal} vehicle={selectedVehicle} />
 
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}

@@ -8,8 +8,9 @@ type InputProps = {
   edge?: "start" | "end" | false;
   position?: "start" | "end";
   variant?: FormControlOwnProps["variant"];
-  inputOnClick?: React.MouseEventHandler<HTMLInputElement>
-  iconOnClick?: React.MouseEventHandler<HTMLButtonElement>
+  inputOnClick?: React.MouseEventHandler<HTMLInputElement>;
+  iconOnClick?: React.MouseEventHandler<HTMLButtonElement>;
+  readOnly?: boolean;
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 export default function Input({
@@ -25,6 +26,7 @@ export default function Input({
   value,
   id,
   variant = "outlined",
+  readOnly,
 }: InputProps) {
   return (
     <FormControl variant={variant}>
@@ -34,9 +36,13 @@ export default function Input({
       <OutlinedInput
         id={id}
         endAdornment={
-          icon ? (<InputAdornment position={position}>
-            <IconButton onClick={iconOnClick} edge={edge}>{icon}</IconButton>
-          </InputAdornment>) : null
+          icon ? (
+            <InputAdornment position={position}>
+              <IconButton onClick={iconOnClick} edge={edge}>
+                {icon}
+              </IconButton>
+            </InputAdornment>
+          ) : null
         }
         label={placeholder}
         className={styles.inputContainer}
@@ -44,6 +50,7 @@ export default function Input({
         onChange={onChange}
         value={value}
         onClick={inputOnClick}
+        readOnly={readOnly}
       />
     </FormControl>
   );

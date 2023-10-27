@@ -2,7 +2,6 @@ import { Problem, TypeLoad, Vehicle } from "@prisma/client";
 import { Dispatch, SetStateAction } from "react";
 import { ImageListType } from "react-images-uploading";
 
-export type TVehicle = Pick<Vehicle, "id" | "transitBoard">;
 export type TProblem = Pick<Problem, "id" | "name">;
 export type TTypeLoad = Pick<TypeLoad, "id" | "name">;
 
@@ -32,20 +31,24 @@ export interface IRequestModalContext {
 
   localization: string;
   problems: TProblem[];
+  selectedProblems: string[];
   problemDescription: string;
   typeOfLoad: TTypeLoad[];
+  selectedTypeOfLoads: string[];
 
   setLocalization: Dispatch<SetStateAction<string>>;
   setProblems: Dispatch<SetStateAction<TProblem[]>>;
-  setSelectedVehicle: Dispatch<SetStateAction<TVehicle | undefined>>;
+  setSelectedProblems: Dispatch<SetStateAction<string[]>>;
+  setSelectedVehicle: Dispatch<SetStateAction<Vehicle | undefined>>;
   setProblemDescription: Dispatch<SetStateAction<string>>;
   setIsCarLoaded: Dispatch<SetStateAction<boolean | undefined>>;
   setWeightInKg: Dispatch<SetStateAction<number | undefined>>;
   setTypeOfLoad: Dispatch<SetStateAction<TTypeLoad[]>>;
+  setSelectedTypeOfLoads: Dispatch<SetStateAction<string[]>>;
 
   isCarLoaded?: boolean;
   weightInKg?: number;
-  selectedVehicle?: TVehicle;
+  selectedVehicle?: Vehicle;
 }
 
 export type RequestModalProviderProps = {
