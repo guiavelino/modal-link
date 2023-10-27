@@ -76,6 +76,7 @@ export default function Requests({ vehicles : vehiclesData }: RequestsProps) {
   const [vehicles, setVehicles] = useState(vehiclesData);
   const [tab, setTab] = useState(0);
   const [addNewVehicle, setAddNewVehicle] = useState(false);
+  const [addFirstVehicle, setAddFirstVehicle] = useState(true);
   
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
@@ -90,7 +91,7 @@ export default function Requests({ vehicles : vehiclesData }: RequestsProps) {
     }
 
     getData();
-  }, [addNewVehicle]);
+  }, [addNewVehicle, addFirstVehicle]);
 
   return (
     <>
@@ -104,7 +105,14 @@ export default function Requests({ vehicles : vehiclesData }: RequestsProps) {
           </Tabs>
         </Box>
 
-        {tab === 0 && <VehiclesTab vehicles={vehicles} addVehicle={() => { setAddNewVehicle(true) }} />}
+        {tab === 0 && (
+          <VehiclesTab 
+            vehicles={vehicles} 
+            addVehicle={() => { 
+              setAddNewVehicle(true) 
+            }}
+          />
+        )}
         {tab === 1 && <RequestTab />}
 
         <footer className={styles.appBar}>
@@ -119,9 +127,9 @@ export default function Requests({ vehicles : vehiclesData }: RequestsProps) {
         </footer>
       </main>
       
-      { addNewVehicle && <VehicleModal isOpen={addNewVehicle} ownsVehicle={false} addNewVehicle={true} setIsOpen={setAddNewVehicle} /> }
+      {addNewVehicle && <VehicleModal isOpen={addNewVehicle} ownsVehicle={false} addNewVehicle={true} setIsOpen={setAddNewVehicle} />}
       
-      <VehicleModal isOpen={vehicles.length === 0} ownsVehicle={vehicles.length > 0}/>
+      <VehicleModal isOpen={vehicles.length === 0} ownsVehicle={vehicles.length > 0} setIsOpen={setAddFirstVehicle} />
     </>
   )
 }
