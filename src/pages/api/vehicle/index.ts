@@ -48,7 +48,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             if (vehicle) {
                 if (brand && model && year && transitBoard && height && width && weight) {
                     const data = await prisma.vehicle.update({
-                        where: { id: 2 },
+                        where: { id },
                         data: { brand, model, year, transitBoard, height, width, weight }
                     });
                 

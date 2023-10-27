@@ -62,31 +62,31 @@ export default function CustomizedDialogs({ open, setOpen, vehicle }: ModalProps
                     <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{ margin: 0, height: '100%' }}>
                         <Grid item xs={3}>
                             <h3>Marca</h3>
-                            <p>Volvo</p>
+                            <p>{vehicle?.brand}</p>
                         </Grid>
                         <Grid item xs={3}>
                             <h3>Modelo</h3>
-                            <p>FH16</p>
+                            <p>{vehicle?.model}</p>
                         </Grid>
                         <Grid item xs={3}>
                             <h3>Ano</h3>
-                            <p>2020</p>
+                            <p>{vehicle?.year}</p>
                         </Grid>
                         <Grid item xs={3}>
                             <h3>Placa</h3>
-                            <p>ABC-1234</p>
+                            <p>{vehicle?.transitBoard}</p>
                         </Grid>
                         <Grid item xs={3}>
                             <h3>Altura</h3>
-                            <p>4,20m</p>
+                            <p>{vehicle?.height}m</p>
                         </Grid>
                         <Grid item xs={3}>
                             <h3>Largura</h3>
-                            <p>2,49m</p>
+                            <p>{vehicle?.width}m</p>
                         </Grid>
                         <Grid item xs={3}>
                             <h3>Peso</h3>
-                            <p>9490 kg</p>
+                            <p>{vehicle?.weight} kg</p>
                         </Grid>
                     </Grid>
                 </article>
