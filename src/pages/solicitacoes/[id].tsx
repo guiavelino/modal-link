@@ -82,7 +82,7 @@ export default function Requests() {
                 container: mapContainer.current,
                 style: 'mapbox://styles/mapbox/streets-v12',
                 center: [userPosition.coords.longitude, userPosition.coords.latitude],
-                zoom: 14
+                zoom: 15
             });
     
             new mapboxgl.Marker({ color: 'red' }).setLngLat([userPosition.coords.longitude, userPosition.coords.latitude]).addTo(map.current);
