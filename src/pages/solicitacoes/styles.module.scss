@@ -1,5 +1,5 @@
 .reqContainer {
-    padding: 32px 0 0;
+    padding: 20px 0 0;
 
     .header {
         display: flex;
@@ -16,6 +16,11 @@
     
     .stepper {
         padding: 8px 16px;
+
+        & > div:nth-child(2),
+        & > div:nth-child(4) {
+            height: 4px !important;
+        }
     }
     
     .map {
