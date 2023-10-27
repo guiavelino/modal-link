@@ -15,7 +15,7 @@
     }
     
     .stepper {
-        padding: 16px;
+        padding: 8px 16px;
     }
     
     .map {
@@ -30,6 +30,8 @@
         display: flex;
         flex-direction: column;
         z-index: 10;
+        position: fixed;
+        bottom: 0;
     
         .driverContainer,
         .statisticsInfo {

@@ -64,8 +64,8 @@ export default function Requests() {
         return { latitude: newLat, longitude: newLon };
     }
 
-    const position = async () => {
-        await navigator.geolocation.getCurrentPosition(
+    const position = () => {
+        navigator.geolocation.getCurrentPosition(
           async userPosition => {
             const modalDriverPosition = calculateModalDriverCoordinates(userPosition.coords.latitude, userPosition.coords.longitude, userPosition.timestamp);
             
@@ -82,7 +82,7 @@ export default function Requests() {
                 container: mapContainer.current,
                 style: 'mapbox://styles/mapbox/streets-v12',
                 center: [userPosition.coords.longitude, userPosition.coords.latitude],
-                zoom: 15
+                zoom: 14
             });
     
             new mapboxgl.Marker({ color: 'red' }).setLngLat([userPosition.coords.longitude, userPosition.coords.latitude]).addTo(map.current);
@@ -99,10 +99,7 @@ export default function Requests() {
                             data: {
                                 type: 'Feature',
                                 properties: {},
-                                geometry: {
-                                    type: 'LineString',
-                                    coordinates: route
-                                }
+                                geometry: { type: 'LineString', coordinates: route }
                             }
                         },
                         layout: { 'line-join': 'round', 'line-cap': 'round' },
