@@ -105,9 +105,7 @@ const FirstStep = ({ vehicles: vehiclesData, problems: problemsData, typeLoads: 
     <div className={styles.firstStepFormulary}>
       <SelectComponent
         placeholder="Veículo"
-        optionsProps={vehicles.map((vehicle) => {
-          return { id: vehicle.id, description: `${vehicle.model} - ${vehicle.transitBoard}` };
-        })}
+        optionsProps={vehicles.map((vehicle) => ({ id: vehicle.id, description: `${vehicle.brand} ${vehicle.model} - ${vehicle.transitBoard}` }))}
         selected={selectedVehicle?.id}
         setSelected={(id) => setSelectedVehicle(vehicles.find((vehicle) => vehicle.id === id))}
       />
