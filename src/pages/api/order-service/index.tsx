@@ -9,7 +9,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
      if (method === 'POST') {
         // TODO: Adicionar tipos de carga e problemas
         const { 
-            modalId,
             vehicleId,
             userId,
             orderStatusId,
@@ -22,7 +21,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         try {
             const { id } = await prisma.orderService.create({
                 data: {
-                    modalId,
                     vehicleId,
                     userId,
                     orderStatusId,

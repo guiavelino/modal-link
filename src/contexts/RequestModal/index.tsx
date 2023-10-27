@@ -31,6 +31,8 @@ export function RequestModalProvider({ children }: RequestModalProviderProps) {
   const [weightInKg, setWeightInKg] = useState<number | undefined>();
   const [typeOfLoad, setTypeOfLoad] = useState<TTypeLoad[]>([]);
   const [selectedTypeOfLoads, setSelectedTypeOfLoads] = useState<string[]>([]);
+  const [lon, setLon] = useState<number>(0);
+  const [lat, setLat] = useState<number>(0);
 
   const [frontPhoto, setFrontPhoto] = useState<ImageListType[]>([]);
   const [leftPhoto, setLeftPhoto] = useState<ImageListType[]>([]);
@@ -120,6 +122,10 @@ export function RequestModalProvider({ children }: RequestModalProviderProps) {
         setSelectedProblems,
         selectedTypeOfLoads,
         setSelectedTypeOfLoads,
+        lon, 
+        setLon,
+        lat,
+        setLat
       }}
     >
       {children}

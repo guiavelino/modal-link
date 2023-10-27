@@ -106,7 +106,7 @@ model TypeLoad {
 
 model OrderService {
   id                  Int                      @id @default(autoincrement())
-  modalId             Int
+  modalId             Int?
   vehicleId           Int
   userId              Int
   orderStatusId       Int
@@ -116,7 +116,7 @@ model OrderService {
   loadWeight          Float?
   createdAt           DateTime                 @default(now())
   updatedAt           DateTime                 @default(now()) @updatedAt
-  modal               Modal                    @relation(fields: [modalId], references: [id])
+  modal               Modal?                   @relation(fields: [modalId], references: [id])
   vehicle             Vehicle                  @relation(fields: [vehicleId], references: [id])
   user                User                     @relation(fields: [userId], references: [id])
   orderStatus         OrderStatus              @relation(fields: [orderStatusId], references: [id])

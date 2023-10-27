@@ -35,6 +35,8 @@ export interface IRequestModalContext {
   problemDescription: string;
   typeOfLoad: TTypeLoad[];
   selectedTypeOfLoads: string[];
+  lon: number;
+  lat: number;
 
   setLocalization: Dispatch<SetStateAction<string>>;
   setProblems: Dispatch<SetStateAction<TProblem[]>>;
@@ -45,6 +47,8 @@ export interface IRequestModalContext {
   setWeightInKg: Dispatch<SetStateAction<number | undefined>>;
   setTypeOfLoad: Dispatch<SetStateAction<TTypeLoad[]>>;
   setSelectedTypeOfLoads: Dispatch<SetStateAction<string[]>>;
+  setLon: Dispatch<SetStateAction<number>>;
+  setLat: Dispatch<SetStateAction<number>>;
 
   isCarLoaded?: boolean;
   weightInKg?: number;

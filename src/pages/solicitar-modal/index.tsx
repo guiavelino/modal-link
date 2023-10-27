@@ -28,6 +28,7 @@ import rightTruck from "../../../public/right-truck.jpg";
 import backTruck from "../../../public/back-truck.jpg";
 import { useRequestModal } from "@/hooks/useRequestModal";
 import CustomizedDialogs from "@/components/Modal";
+import { useSession } from "next-auth/react";
 
 type RequestsProps = {
   vehicles: Vehicle[];
@@ -57,10 +58,11 @@ const FirstStep = ({ vehicles: vehiclesData, problems: problemsData, typeLoads: 
     setSelectedTypeOfLoads,
     selectedProblems,
     setSelectedProblems,
+    lon, 
+    setLon,
+    lat, 
+    setLat
   } = useRequestModal();
-
-  const [lon, setLon] = useState<number>();
-  const [lat, setLat] = useState<number>();
 
   const [alertPermissionLocationOpen, setAlertPermissionLocationOpen] = useState(false);
 
@@ -364,25 +366,50 @@ const LastStep = () => {
 };
 
 export default function RequestModal({ vehicles, problems, typeLoads }: RequestsProps) {
+  const { data: session } = useSession();
+  
   const router = useRouter();
-  const { activeStep, setActiveStep, steps, setSteps, selectedVehicle } = useRequestModal();
+  const { 
+    activeStep, 
+    setActiveStep, 
+    steps, 
+    setSteps, 
+    selectedVehicle,
+    problems: problemsData,
+    problemDescription,
+    typeOfLoad,
+    weightInKg,
+    lon,
+    lat
+  } = useRequestModal();
+
   const [openModal, setOpenModal] = useState(false);
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Procurando Modal adequado...");
 
   const handleNext = () => {
     if (activeStep === 5) {
-      setOpenBackdrop(!openBackdrop);
+      const payload = { 
+        vehicleId: selectedVehicle?.id,
+        userId: session?.user.id,
+        orderStatusId: 3,
+        userLatitude: lat,
+        userLongitude: lon,
+        problemDescription,
+        loadWeight: weightInKg
+    };
 
-      setTimeout(() => {
-        setLoadingMessage("Procurando motorista...");
-      }, 2000);
+      // setOpenBackdrop(!openBackdrop);
 
-      setTimeout(() => {
-        setOpenBackdrop(!openBackdrop);
+      // setTimeout(() => {
+      //   setLoadingMessage("Procurando motorista...");
+      // }, 2000);
 
-        router.push("/solicitacoes/1");
-      }, 4000);
+      // setTimeout(() => {
+      //   setOpenBackdrop(!openBackdrop);
+
+      //   router.push("/solicitacoes/1");
+      // }, 4000);
     }
 
     if (activeStep === 4) {
