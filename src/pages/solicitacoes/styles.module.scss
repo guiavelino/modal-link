@@ -133,8 +133,11 @@
     }
 
     .vehicleContainer {
-        height: calc(100vh - 120px);
+        min-height: calc(100vh - 120px);
         padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
 
         .cardVehicleContainer {
             background-color: #ffffff;
@@ -153,6 +156,11 @@
         .addButton {
             background-color: #66B2FF;
             color: #fff;
+
+            svg {
+                width: 24px;
+                height: 24px;
+            }
         }
     }
 
@@ -175,6 +183,11 @@
         button {
             height: 40px;
             background-color: #00a1fc;
+
+            &:disabled {
+                background-color: #b3b1b1;
+                color: #fff;
+            }
         }
     }
 }

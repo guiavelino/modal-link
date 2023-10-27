@@ -10,6 +10,12 @@
             display: flex;
             flex-direction: column;
             gap: 32px;
+
+            .logoSection {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
         }
 
         form {

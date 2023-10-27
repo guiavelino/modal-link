@@ -1,5 +1,5 @@
 import Header from '@/components/Header';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import { Vehicle } from '@prisma/client';
 import { Box, Button, Card, CardContent, Fab, Grid, Tab, Tabs } from '@mui/material';
@@ -10,10 +10,11 @@ import Link from 'next/link';
 import { BiPlus } from 'react-icons/bi';
 
 type RequestsProps = {
-  vehicles: Vehicle[]
+  vehicles: Vehicle[];
+  addVehicle: () => void;
 }
 
-const VehiclesTab = ({ vehicles }: RequestsProps) => {
+const VehiclesTab = ({ vehicles, addVehicle }: RequestsProps) => {
   return (
     <main className={styles.vehicleContainer}>
       {vehicles.map(vehicle => (
@@ -53,7 +54,11 @@ const VehiclesTab = ({ vehicles }: RequestsProps) => {
         </Card>
       ))}
 
-      <Fab sx={{ position: 'absolute', bottom: 100, right: 16 }} className={styles.addButton}>
+      <Fab 
+        sx={{ position: 'absolute', bottom: 100, right: 16 }} 
+        className={styles.addButton}
+        onClick={addVehicle}
+      >
         <BiPlus />
       </Fab>
     </main>
@@ -68,12 +73,24 @@ const RequestTab = () => {
 }
 
 export default function Requests({ vehicles : vehiclesData }: RequestsProps) {
-  const [vehicles] = useState(vehiclesData);
+  const [vehicles, setVehicles] = useState(vehiclesData);
   const [tab, setTab] = useState(0);
+  const [addNewVehicle, setAddNewVehicle] = useState(false);
   
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
   };
+
+  useEffect(() => {
+    const getData = async () => {
+      const response = await fetch(`/api/user/vehicles`, { credentials: 'include' });
+      const vehicles = await response.json();
+
+      setVehicles(vehicles);
+    }
+
+    getData();
+  }, [addNewVehicle]);
 
   return (
     <>
@@ -87,15 +104,23 @@ export default function Requests({ vehicles : vehiclesData }: RequestsProps) {
           </Tabs>
         </Box>
 
-        {tab === 0 && <VehiclesTab vehicles={vehicles} />}
+        {tab === 0 && <VehiclesTab vehicles={vehicles} addVehicle={() => { setAddNewVehicle(true) }} />}
         {tab === 1 && <RequestTab />}
 
         <footer className={styles.appBar}>
-          <Link href="/solicitar-modal">
-            <Button variant='contained'>Solicitar Modal</Button>
+          <Link href={vehicles.length === 0 ? "/solicitacoes" : "/solicitar-modal"}>
+            <Button 
+              disabled={vehicles.length === 0}
+              variant='contained'
+            >
+              Solicitar Modal
+            </Button>
           </Link>
         </footer>
       </main>
+      
+      { addNewVehicle && <VehicleModal isOpen={addNewVehicle} ownsVehicle={false} addNewVehicle={true} setIsOpen={setAddNewVehicle} /> }
+      
       <VehicleModal isOpen={vehicles.length === 0} ownsVehicle={vehicles.length > 0}/>
     </>
   )

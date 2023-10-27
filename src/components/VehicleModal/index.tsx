@@ -32,9 +32,10 @@ type VehicleModalProps = {
   isOpen: boolean;
   setIsOpen?: Dispatch<SetStateAction<boolean>>;
   vehicle?: Vehicle;
+  addNewVehicle?: boolean;
 };
 
-export default function VehicleModal({ ownsVehicle, isOpen, setIsOpen, vehicle }: VehicleModalProps) {
+export default function VehicleModal({ ownsVehicle, isOpen, setIsOpen, vehicle, addNewVehicle }: VehicleModalProps) {
   const { data: session } = useSession();
 
   const [open, setOpen] = useState(isOpen);
@@ -133,7 +134,16 @@ export default function VehicleModal({ ownsVehicle, isOpen, setIsOpen, vehicle }
         </AppBar>
       ) : (
         <header className={styles.newVehicleHeader}>
-          <Image src={Logo} width={200} alt="" />
+          <div className={styles.logoSection}>
+            <Image src={Logo} width={200} alt="" />
+            
+            {addNewVehicle && (
+              <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+                <MdClose />
+              </IconButton>
+            )}
+          </div>
+
           <h3>Informe os dados do seu veículo</h3>
         </header>
       )}
