@@ -39,8 +39,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                     vehicleId,
                     userId,
                     orderStatusId,
-                    userLatitude,
-                    userLongitude,
+                    userLatitude: userLatitude.toString(),
+                    userLongitude: userLongitude.toString(),
                     problemDescription,
                     loadWeight
                 }
