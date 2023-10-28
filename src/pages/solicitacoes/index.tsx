@@ -1,8 +1,8 @@
 import Header from '@/components/Header';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import { OrderService, OrderStatus, Vehicle } from '@prisma/client';
-import { Box, Button, Card, CardActions, CardContent, Fab, Grid, Tab, Tabs } from '@mui/material';
+import { Alert, AlertColor, Backdrop, Box, Button, Card, CardActions, CardContent, CircularProgress, Fab, Grid, Snackbar, Tab, Tabs } from '@mui/material';
 
 import styles from './styles.module.scss';
 import VehicleModal from '@/components/VehicleModal';
@@ -73,9 +73,13 @@ type Order = OrderService & {
 
 type ServiceOrders = {
   serviceOrders: Order[];
+  setServiceOrders: Dispatch<SetStateAction<Order[]>>;
 }
 
-const RequestTab = ({ serviceOrders }: ServiceOrders) => {
+const RequestTab = ({ serviceOrders, setServiceOrders }: ServiceOrders) => {
+  const [alert, setAlert] = useState({ severity: "success", message: "Solicitação cancelada com sucesso!" });
+  const [showAlert, setShowAlert] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const getRequestDate = (orderServiceCreatedAt: Date) => {
     const createdAt = moment(orderServiceCreatedAt);
@@ -85,6 +89,27 @@ const RequestTab = ({ serviceOrders }: ServiceOrders) => {
     const requestHour =  datetime.subtract(subtractTime).format("DD/MM/YYYY - HH:mm");
 
     return requestHour;
+  }
+
+  const cancelOrder = async (orderServiceId: number) => {
+    setLoading(true);
+
+    const response = await fetch("/api/order-status", {
+      method: "PATCH",
+      body: JSON.stringify({ orderServiceId, orderStatusId: 6 }),
+    });
+
+    setShowAlert(true);
+
+    if (response.status === 200) {
+      const response = await fetch('/api/order-service', { credentials: 'include' });
+      const data = await response.json()
+      setServiceOrders(data);
+    } else {
+      setAlert({ severity: "error", message: "Erro ao cancelar solicitação, tente novamente!" });
+    }
+
+    setLoading(false);
   }
 
   return (
@@ -129,12 +154,34 @@ const RequestTab = ({ serviceOrders }: ServiceOrders) => {
                     Ver mais
                   </Button>
                 </Link>
-                <Button variant='contained' className={styles.cancel} size='large'>Cancelar</Button>
+                <Button 
+                  variant='contained' 
+                  className={styles.cancel} 
+                  size='large'
+                  onClick={() => cancelOrder(orderService.id)}
+                >
+                  Cancelar
+                </Button>
               </>
             )}
           </CardActions>
         </Card>
       ))}
+
+      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
+
+      <Snackbar open={showAlert} autoHideDuration={6000} onClose={() => setShowAlert(false)}>
+        <Alert
+          onClose={() => setShowAlert(false)}
+          variant="filled"
+          severity={alert.severity as AlertColor}
+          sx={{ width: "100%" }}
+        >
+          {alert.message}
+        </Alert>
+      </Snackbar>
     </main>
   )
 }
@@ -144,8 +191,9 @@ type RequestsProps = {
   serviceOrders: Order[];
 }
 
-export default function Requests({ vehicles: vehiclesData, serviceOrders }: RequestsProps) {
+export default function Requests({ vehicles: vehiclesData, serviceOrders: serviceOrdersData }: RequestsProps) {
   const [vehicles, setVehicles] = useState(vehiclesData);
+  const [serviceOrders, setServiceOrders] = useState(serviceOrdersData);
   const [tab, setTab] = useState(0);
   const [addNewVehicle, setAddNewVehicle] = useState(false);
   const [addFirstVehicle, setAddFirstVehicle] = useState(true);
@@ -189,6 +237,7 @@ export default function Requests({ vehicles: vehiclesData, serviceOrders }: Requ
         {tab === 1 && (
           <RequestTab
             serviceOrders={serviceOrders}
+            setServiceOrders={setServiceOrders}
           />
         )}
 
