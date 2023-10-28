@@ -19,13 +19,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 weight
             } = JSON.parse(req.body);
 
+            const vehicleByTransitBoard = await prisma.vehicle.findUnique({ where: { transitBoard } });
+
+            if (!!vehicleByTransitBoard) {
+                return res.status(400).json({ message: "Erro ao realizar cadastro, a placa informada já foi cadastrada." });
+            }
+
             const { id } = await prisma.vehicle.create({
                 data: { userId, brand, model, year, transitBoard, height, width, weight }
             })
             
             return res.status(201).json({ id: id });
         } catch (e) {
-            return res.status(400).json({ message: "Erro ao realizar cadastro, a placa informada já foi cadastrada." });
+            return res.status(400).json({ message: "Erro ao realizar cadastro, tente novamente." });
         }
     }
 
