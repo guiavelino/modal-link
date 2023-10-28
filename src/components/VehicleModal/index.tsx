@@ -191,7 +191,7 @@ export default function VehicleModal({
           placeholder="Placa"
           name="transitBoard"
           value={transitBoard}
-          onChange={(e) => setTransitBoard(e.target.value)}
+          onChange={(e) => setTransitBoard(e.target.value.toUpperCase())}
           required
         />
 
