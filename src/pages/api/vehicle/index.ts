@@ -46,6 +46,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             const vehicle = await prisma.vehicle.findFirst({ where: { id, userId } });
 
             if (vehicle) {
+                const vehicleByTransitBoard = await prisma.vehicle.findUnique({ where: { transitBoard } });
+
+                if (!!vehicleByTransitBoard) {
+                    if (vehicleByTransitBoard?.id !== vehicle.id) {
+                        return res.status(400).json({ message: "Erro ao atualizar informações, a placa informada está vinculada a outro usuário." });
+                    }
+                }
+                
                 if (brand && model && year && transitBoard && height && width && weight) {
                     const data = await prisma.vehicle.update({
                         where: { id },
