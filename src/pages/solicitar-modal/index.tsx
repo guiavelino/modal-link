@@ -312,7 +312,7 @@ const LastStep = () => {
             height={120}
             alt=""
             style={{
-              width: "180px",
+              width: "100%",
               height: "180px",
               objectFit: "cover",
               borderRadius: "4px",
@@ -326,7 +326,7 @@ const LastStep = () => {
             height={120}
             alt=""
             style={{
-              width: "180px",
+              width: "100%",
               height: "180px",
               objectFit: "cover",
               borderRadius: "4px",
@@ -340,7 +340,7 @@ const LastStep = () => {
             height={120}
             alt=""
             style={{
-              width: "180px",
+              width: "100%",
               height: "180px",
               objectFit: "cover",
               borderRadius: "4px",
@@ -354,7 +354,7 @@ const LastStep = () => {
             height={120}
             alt=""
             style={{
-              width: "180px",
+              width: "100%",
               height: "180px",
               objectFit: "cover",
               borderRadius: "4px",
@@ -374,12 +374,9 @@ export default function RequestModal({ vehicles, problems, typeLoads }: Requests
     activeStep,
     setActiveStep,
     steps,
-    setSteps,
     setSelectedVehicle,
     selectedVehicle,
-    problems: problemsData,
     problemDescription,
-    typeOfLoad,
     weightInKg,
     lon,
     lat,
