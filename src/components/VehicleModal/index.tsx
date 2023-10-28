@@ -32,10 +32,18 @@ type VehicleModalProps = {
   isOpen: boolean;
   setIsOpen?: Dispatch<SetStateAction<boolean>>;
   vehicle?: Vehicle;
+  setVehicle: Dispatch<SetStateAction<Vehicle>>;
   addNewVehicle?: boolean;
 };
 
-export default function VehicleModal({ ownsVehicle, isOpen, setIsOpen, vehicle, addNewVehicle }: VehicleModalProps) {
+export default function VehicleModal({
+  ownsVehicle,
+  isOpen,
+  setIsOpen,
+  vehicle,
+  addNewVehicle,
+  setVehicle,
+}: VehicleModalProps) {
   const { data: session } = useSession();
 
   const [open, setOpen] = useState(isOpen);
@@ -110,8 +118,9 @@ export default function VehicleModal({ ownsVehicle, isOpen, setIsOpen, vehicle, 
 
     const data = await response.json();
 
-    if (response.status === 201 || response.status === 200) {
+    if (response.status === 201 || response.status === 200 || response.status === 204) {
       handleClose();
+      setVehicle(data);
     } else {
       setAlert({ severity: "error", message: data.message });
     }
@@ -136,7 +145,7 @@ export default function VehicleModal({ ownsVehicle, isOpen, setIsOpen, vehicle, 
         <header className={styles.newVehicleHeader}>
           <div className={styles.logoSection}>
             <Image src={Logo} width={200} alt="" />
-            
+
             {addNewVehicle && (
               <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
                 <MdClose />

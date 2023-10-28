@@ -2,7 +2,7 @@ import { GetServerSideProps } from "next";
 import Image from "next/image";
 import { Problem, TypeLoad, Vehicle } from "@prisma/client";
 import { ImageType } from "react-images-uploading";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
@@ -10,6 +10,7 @@ import Button from "@mui/material/Button";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 import { PiMapPinFill } from "react-icons/pi";
 import { GiWeight } from "react-icons/gi";
+import { AiOutlineLoading } from "react-icons/ai";
 import { Grid, IconButton, Popover, Radio, Snackbar, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import Backdrop from "@mui/material/Backdrop";
@@ -38,6 +39,8 @@ type RequestsProps = {
 
 const FirstStep = ({ vehicles: vehiclesData, problems: problemsData, typeLoads: typeLoadsData }: RequestsProps) => {
   const [vehicles] = useState<Vehicle[]>(vehiclesData);
+  const [alertPermissionLocationOpen, setAlertPermissionLocationOpen] = useState(false);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
 
   const {
     selectedVehicle,
@@ -58,41 +61,39 @@ const FirstStep = ({ vehicles: vehiclesData, problems: problemsData, typeLoads: 
     setSelectedTypeOfLoads,
     selectedProblems,
     setSelectedProblems,
-    lon, 
-    setLon,
-    lat, 
-    setLat
   } = useRequestModal();
-
-  const [alertPermissionLocationOpen, setAlertPermissionLocationOpen] = useState(false);
 
   const vertical = "bottom";
   const horizontal = "center";
 
   const getLocation = async () => {
-    await navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLon(position?.coords?.longitude);
-        setLat(position?.coords?.latitude);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        setIsLoadingLocation(true);
+        const { latitude, longitude } = position.coords;
+
+        if (latitude && longitude) {
+          const baseUrl = "https://api.tiles.mapbox.com";
+          const data = await fetch(
+            `${baseUrl}/v4/geocode/mapbox.places/${longitude},${latitude}.json?access_token=${
+              process.env.NEXT_PUBLIC_MAPBOX_GL_ACCESS_TOKEN ?? ""
+            }`
+          ).then((res) => res.json());
+
+          const placeName = data.features[0].place_name;
+
+          setLocalization(placeName);
+          setIsLoadingLocation(false);
+        }
       },
       (error) => {
         if (error.code === error.PERMISSION_DENIED) {
           setAlertPermissionLocationOpen(true);
+          setIsLoadingLocation(false);
         }
       },
       { enableHighAccuracy: true }
     );
-
-    if (lon && lat) {
-      const baseUrl = "https://api.tiles.mapbox.com";
-      const data = await fetch(
-        `${baseUrl}/v4/geocode/mapbox.places/${lon},${lat}.json?access_token=${
-          process.env.NEXT_PUBLIC_MAPBOX_GL_ACCESS_TOKEN ?? ""
-        }`
-      );
-      const json = await data.json();
-      setLocalization(json.features[0].place_name);
-    }
   };
 
   useEffect(() => {
@@ -107,21 +108,21 @@ const FirstStep = ({ vehicles: vehiclesData, problems: problemsData, typeLoads: 
     <div className={styles.firstStepFormulary}>
       <SelectComponent
         placeholder="Veículo"
-        optionsProps={vehicles.map((vehicle) => ({ id: vehicle.id, description: `${vehicle.brand} ${vehicle.model} - ${vehicle.transitBoard}` }))}
+        optionsProps={vehicles.map((vehicle) => ({
+          id: vehicle.id,
+          description: `${vehicle.brand} ${vehicle.model} - ${vehicle.transitBoard}`,
+        }))}
         selected={selectedVehicle?.id}
-        setSelected={(id) => setSelectedVehicle(vehicles.find((vehicle) => vehicle.id === id))}
+        setSelected={(id) => setSelectedVehicle(vehicles?.find((vehicle) => vehicle.id === id))}
       />
 
       <Input
         type="text"
         placeholder="Localização"
         name="location"
-        icon={<PiMapPinFill />}
+        icon={isLoadingLocation ? <AiOutlineLoading className={styles.loadingIcon} /> : <PiMapPinFill />}
         iconOnClick={getLocation}
-        onChange={(event) => {
-          const { value } = event.target;
-          setLocalization(value);
-        }}
+        inputOnClick={getLocation}
         value={localization}
         readOnly={true}
       />
@@ -311,8 +312,8 @@ const LastStep = () => {
             height={120}
             alt=""
             style={{
-              width: "100%",
-              height: "100%",
+              width: "180px",
+              height: "180px",
               objectFit: "cover",
               borderRadius: "4px",
             }}
@@ -325,8 +326,8 @@ const LastStep = () => {
             height={120}
             alt=""
             style={{
-              width: "100%",
-              height: "100%",
+              width: "180px",
+              height: "180px",
               objectFit: "cover",
               borderRadius: "4px",
             }}
@@ -339,8 +340,8 @@ const LastStep = () => {
             height={120}
             alt=""
             style={{
-              width: "100%",
-              height: "100%",
+              width: "180px",
+              height: "180px",
               objectFit: "cover",
               borderRadius: "4px",
             }}
@@ -353,8 +354,8 @@ const LastStep = () => {
             height={120}
             alt=""
             style={{
-              width: "100%",
-              height: "100%",
+              width: "180px",
+              height: "180px",
               objectFit: "cover",
               borderRadius: "4px",
             }}
@@ -367,20 +368,21 @@ const LastStep = () => {
 
 export default function RequestModal({ vehicles, problems, typeLoads }: RequestsProps) {
   const { data: session } = useSession();
-  
+
   const router = useRouter();
-  const { 
-    activeStep, 
-    setActiveStep, 
-    steps, 
-    setSteps, 
+  const {
+    activeStep,
+    setActiveStep,
+    steps,
+    setSteps,
+    setSelectedVehicle,
     selectedVehicle,
     problems: problemsData,
     problemDescription,
     typeOfLoad,
     weightInKg,
     lon,
-    lat
+    lat,
   } = useRequestModal();
 
   const [openModal, setOpenModal] = useState(false);
@@ -389,15 +391,15 @@ export default function RequestModal({ vehicles, problems, typeLoads }: Requests
 
   const handleNext = () => {
     if (activeStep === 5) {
-      const payload = { 
+      const payload = {
         vehicleId: selectedVehicle?.id,
         userId: session?.user.id,
         orderStatusId: 3,
         userLatitude: lat,
         userLongitude: lon,
         problemDescription,
-        loadWeight: weightInKg
-    };
+        loadWeight: weightInKg,
+      };
 
       // setOpenBackdrop(!openBackdrop);
 
@@ -469,7 +471,12 @@ export default function RequestModal({ vehicles, problems, typeLoads }: Requests
         {activeStep === 5 ? "Confirmar" : "Continuar"}
       </Button>
 
-      <CustomizedDialogs open={openModal} setOpen={setOpenModal} vehicle={selectedVehicle} />
+      <CustomizedDialogs
+        open={openModal}
+        setOpen={setOpenModal}
+        vehicle={selectedVehicle}
+        setVehicle={setSelectedVehicle as Dispatch<SetStateAction<Vehicle>>}
+      />
 
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}

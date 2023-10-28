@@ -65,6 +65,7 @@
     .pillContainer {
       display: flex;
       gap: 8px;
+      flex-wrap: wrap;
 
       span {
         background-color: #d9d9d9;
@@ -74,5 +75,19 @@
         font-size: 0.875rem;
       }
     }
+  }
+}
+
+.loadingIcon {
+  animation: spin 2s linear infinite;
+  -webkit-animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
