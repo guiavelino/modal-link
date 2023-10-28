@@ -67,7 +67,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
             const serviceOrders = await prisma.orderService.findMany({ 
                 where: { userId },
-                include: { vehicle: true, orderStatus: true } 
+                include: { vehicle: true, orderStatus: true },
+                orderBy: { createdAt: 'desc' }
             });
             
             return res.status(200).json(serviceOrders);
