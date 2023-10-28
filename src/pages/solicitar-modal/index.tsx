@@ -1,6 +1,6 @@
 import { GetServerSideProps } from "next";
 import Image from "next/image";
-import { Problem, TypeLoad, Vehicle } from "@prisma/client";
+import { Modal, Problem, TypeLoad, Vehicle } from "@prisma/client";
 import { ImageType } from "react-images-uploading";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Stepper from "@mui/material/Stepper";
@@ -387,7 +387,7 @@ export default function RequestModal({ vehicles, problems, typeLoads }: Requests
     lon,
     lat,
     typeOfLoad,
-    problems: selectedProblems,
+    problems: selectedProblems
   } = useRequestModal();
 
   const [openModal, setOpenModal] = useState(false);
@@ -416,7 +416,26 @@ export default function RequestModal({ vehicles, problems, typeLoads }: Requests
       const data = await response.json();
 
       if (response.status === 201) {
-        push(`/solicitacoes/${data.orderServiceId}`);
+        const modalCategoryId = 7; // TODO: Recuperar categoria classificada pela IA;
+
+        const modalsResponse = await fetch(`/api/modal/modal-category/${modalCategoryId}`);
+        const modals: Modal[] = await modalsResponse.json();
+        const modal = modals[Math.floor(Math.random() * modals.length)];
+        
+        const response = await fetch('/api/order-service', { 
+          method: 'PATCH', 
+          body: JSON.stringify({
+            orderServiceId: data.orderServiceId,
+            modalId: modal.id
+          }) 
+        });
+
+        if (response.status === 200) {
+          push(`/solicitacoes/${data.orderServiceId}`);
+        } else {
+          setError(true);
+          setOpenBackdrop(false);
+        }
       } else {
         setError(true);
         setOpenBackdrop(false);
