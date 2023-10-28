@@ -197,6 +197,7 @@ export default function Requests({ vehicles: vehiclesData, serviceOrders: servic
   const [tab, setTab] = useState(0);
   const [addNewVehicle, setAddNewVehicle] = useState(false);
   const [addFirstVehicle, setAddFirstVehicle] = useState(true);
+  const hasOpenOrder = serviceOrders.some(serviceOrder => serviceOrder.orderStatusId !== 6);
   
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
@@ -242,9 +243,9 @@ export default function Requests({ vehicles: vehiclesData, serviceOrders: servic
         )}
 
         <footer className={styles.appBar}>
-          <Link href={vehicles.length === 0 ? "/solicitacoes" : "/solicitar-modal"}>
+          <Link href={vehicles.length === 0 || hasOpenOrder ? "/solicitacoes" : "/solicitar-modal"}>
             <Button 
-              disabled={vehicles.length === 0}
+              disabled={vehicles.length === 0 || hasOpenOrder}
               variant='contained'
             >
               Solicitar Modal

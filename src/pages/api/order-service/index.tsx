@@ -60,6 +60,21 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
     }
 
+    if (method === 'PATCH') {
+        const { orderServiceId, modalId } = JSON.parse(req.body);
+
+        try {
+            const orderService = await prisma.orderService.update({
+                data: { modalId }, 
+                where: { id: orderServiceId }
+            });
+    
+            return res.status(200).json(orderService);
+        } catch(e) {
+            return res.status(400).json({ message: "Erro ao procurar modal, tente novamente." });
+        }
+    }
+
     if (method === 'GET') {
         try {
             const { accessToken } = (jwtDecode(req.cookies['next-auth.session-token'] as string)) as JWT;

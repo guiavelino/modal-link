@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     const { method } = req;
     
-     if (method === 'PATCH') {
+    if (method === 'PATCH') {
         const { orderServiceId, orderStatusId } = JSON.parse(req.body);
 
         const orderService = await prisma.orderService.update({

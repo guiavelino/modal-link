@@ -134,7 +134,7 @@
 
     .vehicleContainer {
         min-height: calc(100vh - 120px);
-        padding: 12px;
+        padding: 12px 12px 100px;
         display: flex;
         flex-direction: column;
         gap: 20px;
@@ -166,7 +166,7 @@
 
     .orderServiceContainer {
         min-height: calc(100vh - 120px);
-        padding: 12px;
+        padding: 12px 12px 100px;
         display: flex;
         flex-direction: column;
         gap: 20px;

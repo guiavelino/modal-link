@@ -9,6 +9,7 @@ import styles from './styles.module.scss';
 import { GetServerSideProps } from 'next';
 import { Modal, ModalCategory, OrderService, User } from '@prisma/client';
 import moment from 'moment';
+import { useRequestModal } from '@/hooks/useRequestModal';
 
 type RequestsProps = {
     orderService: OrderService & {
@@ -53,6 +54,7 @@ function VerticalLinearStepper({ orderService }: RequestsProps) {
 
 export default function Requests({ orderService }: RequestsProps) {
     const router = useRouter();
+    const { resetContext } = useRequestModal();
     const [minutes, setMinutes] = useState("");
     const [kilometers, setKilometers] = useState("");
     const mapContainer = useRef<any>(null);
@@ -135,7 +137,8 @@ export default function Requests({ orderService }: RequestsProps) {
         );
     };
 
-    useEffect(() => {        
+    useEffect(() => {
+        resetContext();   
         position();
     }, []);
 

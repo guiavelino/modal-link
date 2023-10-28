@@ -39,6 +39,33 @@ export function RequestModalProvider({ children }: RequestModalProviderProps) {
   const [rightPhoto, setRightPhoto] = useState<ImageListType[]>([]);
   const [backPhoto, setBackPhoto] = useState<ImageListType[]>([]);
 
+  const resetContext = () => {
+    setActiveStep(0);
+    setSteps([
+      stepFactory(0, "Solicitar Modal", false),
+      stepFactory(1, "Foto frontal", false),
+      stepFactory(2, "Foto da lateral esquerda", false),
+      stepFactory(3, "Foto da lateral direita", false),
+      stepFactory(4, "Foto da traseira", false),
+      stepFactory(5, "Solicitar Modal", false),
+    ]);
+    setSelectedVehicle(undefined);
+    setLocalization("");
+    setProblems([]);
+    setSelectedProblems([]);
+    setProblemDescription("");
+    setIsCarLoaded(undefined);
+    setWeightInKg(undefined);
+    setTypeOfLoad([]);
+    setSelectedTypeOfLoads([]);
+    setLon(0);
+    setLat(0);
+    setFrontPhoto([]);
+    setLeftPhoto([]);
+    setRightPhoto([]);
+    setBackPhoto([]);
+  };
+
   useEffect(() => {
     if (activeStep === 0) {
       step1Validation({
@@ -125,7 +152,8 @@ export function RequestModalProvider({ children }: RequestModalProviderProps) {
         lon, 
         setLon,
         lat,
-        setLat
+        setLat,
+        resetContext
       }}
     >
       {children}

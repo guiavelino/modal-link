@@ -53,6 +53,8 @@ export interface IRequestModalContext {
   isCarLoaded?: boolean;
   weightInKg?: number;
   selectedVehicle?: Vehicle;
+
+  resetContext: () => void;
 }
 
 export type RequestModalProviderProps = {
