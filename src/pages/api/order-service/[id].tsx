@@ -16,7 +16,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             const { accessToken } = (jwtDecode(req.cookies['next-auth.session-token'] as string)) as JWT;
             const { id: userId } = jwtDecode(accessToken as string) as any;
 
-            const orderService = await prisma.orderService.findUnique({ where: { id, userId } })
+            const orderService = await prisma.orderService.findUnique({ 
+                where: { id, userId }, 
+                include: { 
+                    modal: {
+                        include: {
+                            user: true,
+                            modalCategory: true
+                        }
+                    }
+                } 
+            })
             
             return res.status(200).json({ ...orderService });
         } catch (e) {

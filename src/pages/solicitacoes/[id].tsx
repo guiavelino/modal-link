@@ -6,14 +6,35 @@ import { MdKeyboardArrowLeft } from 'react-icons/md';
 import { useRouter } from 'next/router';
 
 import styles from './styles.module.scss';
+import { GetServerSideProps } from 'next';
+import { Modal, ModalCategory, OrderService, User } from '@prisma/client';
+import moment from 'moment';
 
-function VerticalLinearStepper() {
+type RequestsProps = {
+    orderService: OrderService & {
+        modal: Modal & {
+            user: User
+        } & {
+            modalCategory: ModalCategory
+        }
+    };
+}
+
+function VerticalLinearStepper({ orderService }: RequestsProps) {
     const [activeStep] = useState(2);
-  
+
+    const createdAt = moment(orderService.createdAt);
+    
+    var subtractTime = moment.duration("00:01");
+    const datetime = moment(createdAt);
+    const requestHour =  datetime.subtract(subtractTime).format("HH:mm");
+
+    const hour = createdAt.format("HH:mm");
+
     const steps = [
-        { label: 'Solicitação realizada', description: '19:37' },
-        { label: 'Procurando Modal adequado', description: '19:38' },
-        { label: 'Bruno Henrique está a caminho', description: '19:40' }
+        { label: 'Solicitação realizada', description: requestHour },
+        { label: 'Procurando Modal adequado', description: hour },
+        { label: `${orderService.modal.user.fullName} está a caminho`, description: hour }
     ];
 
     return (
@@ -30,12 +51,12 @@ function VerticalLinearStepper() {
     );
 }
 
-export default function Requests() {
+export default function Requests({ orderService }: RequestsProps) {
+    const router = useRouter();
     const [minutes, setMinutes] = useState("");
     const [kilometers, setKilometers] = useState("");
     const mapContainer = useRef<any>(null);
     const map = useRef<mapboxgl.Map | any>(null);
-    const router = useRouter();
     mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_GL_ACCESS_TOKEN ?? '';
     
     const convertToMinutes = (durationInSeconds: number) => (durationInSeconds / 60).toFixed(0);
@@ -67,9 +88,12 @@ export default function Requests() {
     const position = () => {
         navigator.geolocation.getCurrentPosition(
           async userPosition => {
-            const modalDriverPosition = calculateModalDriverCoordinates(userPosition.coords.latitude, userPosition.coords.longitude, userPosition.timestamp);
+            const latitude = parseFloat(orderService.userLatitude);
+            const longitude = parseFloat(orderService.userLongitude);
+
+            const modalDriverPosition = calculateModalDriverCoordinates(latitude, longitude, userPosition.timestamp);
             
-            const query = await fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${userPosition.coords.longitude},${userPosition.coords.latitude};${modalDriverPosition.longitude},${modalDriverPosition.latitude}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`);
+            const query = await fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${longitude},${latitude};${modalDriverPosition.longitude},${modalDriverPosition.latitude}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`);
             const json = await query.json();
             const data = json.routes[0];
             const route = data.geometry.coordinates;
@@ -81,11 +105,11 @@ export default function Requests() {
             map.current = new mapboxgl.Map({
                 container: mapContainer.current,
                 style: 'mapbox://styles/mapbox/streets-v12',
-                center: [userPosition.coords.longitude, userPosition.coords.latitude],
+                center: [longitude, latitude],
                 zoom: 15
             });
     
-            new mapboxgl.Marker({ color: 'red' }).setLngLat([userPosition.coords.longitude, userPosition.coords.latitude]).addTo(map.current);
+            new mapboxgl.Marker({ color: 'red' }).setLngLat([longitude, latitude]).addTo(map.current);
     
             new mapboxgl.Marker().setLngLat([modalDriverPosition.longitude, modalDriverPosition.latitude]).addTo(map.current);
     
@@ -111,7 +135,7 @@ export default function Requests() {
         );
     };
 
-    useEffect(() => {
+    useEffect(() => {        
         position();
     }, []);
 
@@ -125,23 +149,23 @@ export default function Requests() {
                 &nbsp;
             </header>
 
-            <VerticalLinearStepper />
+            <VerticalLinearStepper orderService={orderService} />
 
             <div ref={mapContainer} className={styles.map} />
 
             <section className={styles.modalInfoContainer}>
                 <div className={styles.driverContainer}>
                     <div className={styles.driverInfo}>
-                        <Avatar>BH</Avatar>
+                        <Avatar alt={orderService.modal.user.fullName} src="/static/images/avatar/2.jpg" />
                         <div>
-                            <h3>Bruno Henrique</h3>
-                            <p>Guincho Accelo 1016</p>
+                            <h3>{orderService.modal.user.fullName}</h3>
+                            <p>{orderService.modal.modalCategory.name}</p>
                         </div>
                     </div>
 
                     <div className={styles.transitBoard}>
                         <div>BRASIL</div>
-                        <div>FIA-1E89</div>
+                        <div>{orderService.modal.transitBoard}</div>
                     </div>
                 </div>
                 <div className={styles.statisticsInfo}>
@@ -157,4 +181,25 @@ export default function Requests() {
             </section>
         </main>
     )
+}
+
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+    const response = await fetch(`${process.env.BASE_URL}/api/order-service/${query.id}`, {
+      headers: {
+        Cookie: `next-auth.session-token=${req.cookies['next-auth.session-token']}`
+      }
+    });
+  
+    const orderService = await response.json();
+
+    if (!orderService.id) {
+        return { 
+            redirect: {
+                destination: '/solicitacoes',
+                permanent: false
+            }
+        };
+    }
+  
+    return { props: { orderService } };
 }
