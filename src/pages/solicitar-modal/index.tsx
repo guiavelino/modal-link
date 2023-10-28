@@ -11,7 +11,7 @@ import { MdKeyboardArrowLeft } from "react-icons/md";
 import { PiMapPinFill } from "react-icons/pi";
 import { GiWeight } from "react-icons/gi";
 import { AiOutlineLoading } from "react-icons/ai";
-import { Grid, IconButton, Popover, Radio, Snackbar, Typography } from "@mui/material";
+import { Alert, Grid, IconButton, Radio, Snackbar } from "@mui/material";
 import { useRouter } from "next/router";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -61,6 +61,8 @@ const FirstStep = ({ vehicles: vehiclesData, problems: problemsData, typeLoads: 
     setSelectedTypeOfLoads,
     selectedProblems,
     setSelectedProblems,
+    setLon,
+    setLat
   } = useRequestModal();
 
   const vertical = "bottom";
@@ -73,6 +75,9 @@ const FirstStep = ({ vehicles: vehiclesData, problems: problemsData, typeLoads: 
         const { latitude, longitude } = position.coords;
 
         if (latitude && longitude) {
+          setLon(longitude);
+          setLat(latitude);
+
           const baseUrl = "https://api.tiles.mapbox.com";
           const data = await fetch(
             `${baseUrl}/v4/geocode/mapbox.places/${longitude},${latitude}.json?access_token=${
@@ -262,7 +267,7 @@ const LastStep = () => {
     <div className={styles.lastStepContainer}>
       <article>
         <h3>Veículo</h3>
-        <p>{selectedVehicle?.transitBoard}</p>
+        <p>{selectedVehicle?.brand} {selectedVehicle?.model} - {selectedVehicle?.transitBoard}</p>
       </article>
 
       <article>
@@ -273,8 +278,8 @@ const LastStep = () => {
       <article>
         <h3>Problema</h3>
         <div className={styles.pillContainer}>
-          {problems.map((problem, idx) => (
-            <span key={`${problem}-${idx}`}>{problem.name}</span>
+          {problems.map((problem) => (
+            <span key={problem.id}>{problem.name}</span>
           ))}
         </div>
 
@@ -368,6 +373,7 @@ const LastStep = () => {
 
 export default function RequestModal({ vehicles, problems, typeLoads }: RequestsProps) {
   const { data: session } = useSession();
+  const { push } = useRouter(); 
 
   const router = useRouter();
   const {
@@ -380,13 +386,16 @@ export default function RequestModal({ vehicles, problems, typeLoads }: Requests
     weightInKg,
     lon,
     lat,
+    typeOfLoad,
+    problems: selectedProblems,
   } = useRequestModal();
 
   const [openModal, setOpenModal] = useState(false);
   const [openBackdrop, setOpenBackdrop] = useState(false);
-  const [loadingMessage, setLoadingMessage] = useState("Procurando Modal adequado...");
+  const [loadingMessage] = useState("Procurando Modal adequado...");
+  const [error, setError] = useState(false);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (activeStep === 5) {
       const payload = {
         vehicleId: selectedVehicle?.id,
@@ -396,21 +405,22 @@ export default function RequestModal({ vehicles, problems, typeLoads }: Requests
         userLongitude: lon,
         problemDescription,
         loadWeight: weightInKg,
+        problems: selectedProblems, 
+        typeLoads: typeOfLoad
       };
 
-      console.log(payload);
+      setOpenBackdrop(true);
 
-      // setOpenBackdrop(!openBackdrop);
+      const response = await fetch('/api/order-service', { method: 'POST', body: JSON.stringify(payload) });
 
-      // setTimeout(() => {
-      //   setLoadingMessage("Procurando motorista...");
-      // }, 2000);
+      const data = await response.json();
 
-      // setTimeout(() => {
-      //   setOpenBackdrop(!openBackdrop);
-
-      //   router.push("/solicitacoes/1");
-      // }, 4000);
+      if (response.status === 201) {
+        push(`/solicitacoes/${data.orderServiceId}`);
+      } else {
+        setError(true);
+        setOpenBackdrop(false);
+      }
     }
 
     if (activeStep === 4) {
@@ -492,6 +502,17 @@ export default function RequestModal({ vehicles, problems, typeLoads }: Requests
         <CircularProgress color="inherit" />
         <h3>{loadingMessage}</h3>
       </Backdrop>
+
+      <Snackbar open={error} autoHideDuration={6000} onClose={() => setError(false)}>
+        <Alert
+          onClose={() => setError(false)}
+          variant="filled"
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          Erro ao realizar solicitação, tente novamente!
+        </Alert>
+      </Snackbar>
     </main>
   );
 }

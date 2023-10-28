@@ -1,13 +1,24 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Problem, TypeLoad } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next"
 
 const prisma = new PrismaClient();
+
+type Payload = {
+    vehicleId: number;
+    userId: number;
+    orderStatusId: number;
+    userLatitude: string;
+    userLongitude: string;
+    problemDescription: string;
+    loadWeight: number;
+    problems: Problem[];
+    typeLoads: TypeLoad[];
+}
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     const { method } = req;
 
      if (method === 'POST') {
-        // TODO: Adicionar tipos de carga e problemas
         const { 
             vehicleId,
             userId,
@@ -15,11 +26,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             userLatitude,
             userLongitude,
             problemDescription,
-            loadWeight
-        } = JSON.parse(req.body);
-        
+            loadWeight,
+            problems, 
+            typeLoads
+        }: Payload = JSON.parse(req.body);
+     
         try {
-            const { id } = await prisma.orderService.create({
+            const { id: orderServiceId } = await prisma.orderService.create({
                 data: {
                     vehicleId,
                     userId,
@@ -29,9 +42,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                     problemDescription,
                     loadWeight
                 }
-            })
+            });
 
-            return res.status(201).json({ id });
+            for (const problem of problems) {
+                await prisma.orderServiceToProblem.create({ data: { orderServiceId, problemId: problem.id } });
+            }
+            
+            for (const typeLoad of typeLoads) {
+                await prisma.orderServiceToTypeLoad.create({ data: { orderServiceId, typeLoadId: typeLoad.id } });
+            }
+
+            return res.status(201).json({ orderServiceId });
         } catch (e) {
             return res.status(400).json({ message: "Erro ao realizar solicitação, tente novamente." });
         }
