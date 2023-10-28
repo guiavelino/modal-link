@@ -25,7 +25,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             
             return res.status(201).json({ id: id });
         } catch (e) {
-            return res.status(400).json({ message: "Erro ao realizar cadastro, tente novamente." });
+            return res.status(400).json({ message: "Erro ao realizar cadastro, a placa informada já foi cadastrada." });
         }
     }
 
