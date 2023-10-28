@@ -1,5 +1,7 @@
 import { PrismaClient, Problem, TypeLoad } from "@prisma/client";
+import jwtDecode from "jwt-decode";
 import { NextApiRequest, NextApiResponse } from "next"
+import { JWT } from "next-auth/jwt";
 
 const prisma = new PrismaClient();
 
@@ -55,6 +57,22 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             return res.status(201).json({ orderServiceId });
         } catch (e) {
             return res.status(400).json({ message: "Erro ao realizar solicitação, tente novamente." });
+        }
+    }
+
+    if (method === 'GET') {
+        try {
+            const { accessToken } = (jwtDecode(req.cookies['next-auth.session-token'] as string)) as JWT;
+            const { id: userId } = jwtDecode(accessToken as string) as any;
+
+            const serviceOrders = await prisma.orderService.findMany({ 
+                where: { userId },
+                include: { vehicle: true, orderStatus: true } 
+            });
+            
+            return res.status(200).json(serviceOrders);
+        } catch (e) {
+            return res.status(400).json([]);
         }
     }
 

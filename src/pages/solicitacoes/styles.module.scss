@@ -143,13 +143,13 @@
             background-color: #ffffff;
             display: flex;
             align-items: center;
-            height: 140px;
             width: 100%;
             border-radius: 4px;
     
             h3 {
                 color: #989898;
                 font-size: 0.875rem;
+                margin: 8px 0 4px;
             }
         }
 
@@ -160,6 +160,49 @@
             svg {
                 width: 24px;
                 height: 24px;
+            }
+        }
+    }
+
+    .orderServiceContainer {
+        min-height: calc(100vh - 120px);
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        .cardOrderServiceContainer {
+            background-color: #ffffff;
+            width: 100%;
+            border-radius: 4px;
+
+            h3 {
+                color: #989898;
+                font-size: 0.875rem;
+                margin: 8px 0 4px;
+            }
+
+            .actions {
+                width: 100%;
+                padding: 8px 16px 16px;
+                display: flex;
+                gap: 8px;
+
+                a,
+                .showMore,
+                .cancel {
+                    text-transform: capitalize;
+                    width: 100%;
+                }
+
+                .showMore {
+                    color: #00a1fc;
+                    border-color: #00a1fc;
+                }
+
+                .cancel {
+                    background-color: #CF6F64;
+                }
             }
         }
     }

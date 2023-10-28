@@ -192,7 +192,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
   
     const orderService = await response.json();
 
-    if (!orderService.id) {
+    if (!orderService.id || orderService.orderStatusId === 6) {
         return { 
             redirect: {
                 destination: '/solicitacoes',
