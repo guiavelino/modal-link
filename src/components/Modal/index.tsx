@@ -26,7 +26,7 @@ type ModalProps = {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   vehicle?: Vehicle;
-  setVehicle: Dispatch<SetStateAction<Vehicle>>;
+  setVehicle?: Dispatch<SetStateAction<Vehicle>>;
 };
 
 export default function CustomizedDialogs({ open, setOpen, vehicle, setVehicle }: ModalProps) {

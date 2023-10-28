@@ -398,6 +398,8 @@ export default function RequestModal({ vehicles, problems, typeLoads }: Requests
         loadWeight: weightInKg,
       };
 
+      console.log(payload);
+
       // setOpenBackdrop(!openBackdrop);
 
       // setTimeout(() => {

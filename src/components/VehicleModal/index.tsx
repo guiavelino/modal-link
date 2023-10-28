@@ -32,7 +32,7 @@ type VehicleModalProps = {
   isOpen: boolean;
   setIsOpen?: Dispatch<SetStateAction<boolean>>;
   vehicle?: Vehicle;
-  setVehicle: Dispatch<SetStateAction<Vehicle>>;
+  setVehicle?: Dispatch<SetStateAction<Vehicle>>;
   addNewVehicle?: boolean;
 };
 
@@ -120,7 +120,8 @@ export default function VehicleModal({
 
     if (response.status === 201 || response.status === 200 || response.status === 204) {
       handleClose();
-      setVehicle(data);
+
+      if (setVehicle) setVehicle(data);
     } else {
       setAlert({ severity: "error", message: data.message });
     }
