@@ -416,9 +416,7 @@ export default function RequestModal({ vehicles, problems, typeLoads }: Requests
       const data = await response.json();
 
       if (response.status === 201) {
-        // TODO: Recuperar categoria classificada pela IA;
         const modalCategoryId = (Math.floor(Math.random() * (8 - 1 + 1)) + 1);
-
         const modalsResponse = await fetch(`/api/modal/modal-category/${modalCategoryId}`);
         const modals: Modal[] = await modalsResponse.json();
         const modal = modals[Math.floor(Math.random() * modals.length)];
