@@ -7,6 +7,10 @@ export function middleware(request: NextRequest) {
   const isUserOnMobile = isMobile(request);
     
   if (!isUserOnMobile) {
+    if (request.nextUrl.pathname === '/enable-only-mobile') {
+      return NextResponse.next();
+    }
+
     return NextResponse.redirect(new URL('/enable-only-mobile', request.url));
   }
 
@@ -16,7 +20,7 @@ export function middleware(request: NextRequest) {
     const data = jwtDecode(session.value);
 
     if (data) {
-      if (request.nextUrl.pathname === '/cadastre-se' || request.nextUrl.pathname === '/login') {
+      if (request.nextUrl.pathname === '/cadastre-se' || request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/enable-only-mobile') {
         return NextResponse.redirect(new URL('/solicitacoes', request.url));
       }
 
@@ -36,6 +40,7 @@ export const config = {
     '/login',
     '/cadastre-se',
     '/solicitar-modal',
-    '/solicitacoes/:path*'
+    '/solicitacoes/:path*',
+    '/enable-only-mobile'
   ]
 }
