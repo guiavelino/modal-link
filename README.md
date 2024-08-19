@@ -10,12 +10,12 @@ To get started with the project locally, follow these steps:
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/your-username/modal-link-porto-seguro.git
+    git clone https://github.com/guiavelino/modal-link.git
     ```
     
 2. Navigate to the project directory:
     ```bash
-    cd modal-link-porto-seguro
+    cd modal-link
     ```
 
 3. Install the required dependencies:
